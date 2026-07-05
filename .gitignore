@@ -1,0 +1,123 @@
+# Python
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.virtualenv/
+
+# Environment files
+.env
+.env.*
+*.env
+.envrc
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# Operating Systems
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.Spotlight-V100/
+.Trashes/
+._*
+
+# Logs
+*.log
+logs/
+
+
+# Coverage & Testing
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+
+
+# Jupyter
+.ipynb_checkpoints/
+
+
+# Type checkers
+.dmypy.json
+dmypy.json
+
+
+# Local databases
+*.sqlite
+*.sqlite3
+*.db
+
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+*.cache
+.cache/
+
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.7z
+*.rar
+
+
+# Secrets
+secrets/
+credentials/
+*.pem
+*.key
+*.crt
+*.p12
+
+
+# Local configuration
+config.local.*
+settings.local.*
+
+
+# Generated documentation
+site/
+docs/_build/
+
+
+# Node (if used)
+node_modules/
+
+
+# Misc
+.python-version
+slots/
