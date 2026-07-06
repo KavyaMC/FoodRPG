@@ -9,7 +9,6 @@ class Game:
         pygame.init()
 
         self._init_window()
-        self._init_services()
         self._init_state()
 
     def _init_window(self):
@@ -21,27 +20,21 @@ class Game:
 
         self.clock = pygame.time.Clock()
 
-    def _init_services(self):
-        self.speech = Speech()
-
     def _init_state(self):
-        self.state = GameState(
-            speech=self.speech,
-        )
+        self.state = GameState()
 
     def run(self):
         while self.state.running:
             self.handle_events()
-
             pygame.display.flip()
             self.clock.tick(30)
-
         pygame.quit()
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit()
+            self.state.screen_manager.dispatch(event)
 
     def quit(self):
         self.state.running = False
