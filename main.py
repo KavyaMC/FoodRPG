@@ -1,5 +1,7 @@
+from core.game import Game
 def main():
-	pass
+	game = Game()
+	game.run()
 
-if __name__ = "__main__":
+if __name__ == "__main__":
 	main()
