@@ -1,6 +1,7 @@
 import pygame
 
 from .gamestate import GameState
+from services.speech import Speech
 
 
 class Game:
@@ -21,10 +22,12 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def _init_services(self):
-        pass
+        self.speech = Speech()
 
     def _init_state(self):
-        self.state = GameState()
+        self.state = GameState(
+            speech=self.speech,
+        )
 
     def run(self):
         while self.state.running:
