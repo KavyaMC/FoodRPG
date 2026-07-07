@@ -41,4 +41,4 @@ class Button(Control):
         self.action = action
 
     def activate(self):
-        return self.action
+        return self.action()
