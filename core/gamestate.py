@@ -1,5 +1,6 @@
-from services.speech import Speech
 from services.screen_manager import ScreenManager
+from services.speech import Speech
+
 
 class GameState:
     def __init__(self):

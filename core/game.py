@@ -1,7 +1,6 @@
 import pygame
 
 from .gamestate import GameState
-from services.speech import Speech
 
 
 class Game:
