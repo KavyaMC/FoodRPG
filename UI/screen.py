@@ -17,6 +17,9 @@ class Screen:
     def resume(self):
         pass
 
+    def update(self, dt):
+        pass
+
     def close(self):
         pass
 
@@ -87,18 +90,18 @@ class TransitionScreen(Screen):
         state,
         title="",
         description="",
-        auto_dismiss=False,
-        duration=0.0,
         on_finish=None,
     ):
         super().__init__(state, title, description)
-
-        self.auto_dismiss = auto_dismiss
-        self.duration = duration
+        self.controller = None
         self.on_finish = on_finish
+
+    def update(self, dt):
+        if self.controller:
+            self.controller.update(dt)
 
     def finish(self):
         if self.on_finish:
             self.on_finish()
         else:
-            self.state.screen_manager.pop_screen()
+            self.state.screen_manager.pop()

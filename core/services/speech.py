@@ -72,15 +72,26 @@ class Speech:
         self.engine = self._create_engine(mode)
         self.speak(f"Speech backend set to {mode}", interrupt=True)
 
-    def speak(self, text, interrupt=False):
+    @property
+    def speaking(self):
+        try:
+            return self.engine.speaking
+        except Exception:
+            return None
+
+    def speak(self, text, interrupt=False, on_complete=None):
         if not self.enabled:
+            if on_complete:
+                on_complete()
             return
 
         try:
             if interrupt and hasattr(self.engine, "stop"):
                 self.engine.stop()
-
             self.engine.output(text)
+
+            if on_complete:
+                on_complete()
 
         except Exception:
             try:
@@ -89,5 +100,7 @@ class Speech:
                 if sapi_id is not None:
                     fallback = self.ctx.create(sapi_id)
                     fallback.output(text)
+                    if on_complete:
+                        on_complete()
             except Exception:
                 pass
