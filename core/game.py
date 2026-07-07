@@ -1,5 +1,6 @@
 import pygame
-from UI.splash_screen import SplashScreen
+
+from UI.main_menu import MainMenuScreen
 
 from .gamestate import GameState
 
@@ -28,7 +29,7 @@ class Game:
         self.state = GameState()
 
     def startup(self):
-        self.state.screen_manager.push(SplashScreen(self.state))
+        self.state.screen_manager.push(MainMenuScreen(self.state))
 
     def update_startup(self, dt):
         self.startup_elapsed += dt
