@@ -53,17 +53,13 @@ class ControlScreen(Screen):
 
     def announce(self):
         if self.current_control:
-            self.state.speak(
-                self.current_control.announcement()
-            )
+            self.state.speak(self.current_control.announcement())
 
     def move_next(self):
         if not self.controls:
             return
 
-        self.focus_index = (
-            self.focus_index + 1
-        ) % len(self.controls)
+        self.focus_index = (self.focus_index + 1) % len(self.controls)
 
         self.announce()
 
@@ -71,9 +67,7 @@ class ControlScreen(Screen):
         if not self.controls:
             return
 
-        self.focus_index = (
-            self.focus_index - 1
-        ) % len(self.controls)
+        self.focus_index = (self.focus_index - 1) % len(self.controls)
 
         self.announce()
 
