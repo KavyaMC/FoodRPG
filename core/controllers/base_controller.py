@@ -23,5 +23,8 @@ def game(self):
     def replace(self, screen):
         self.screens.replace_screen(screen)
 
+    def update(self):
+        pass
+
     def quit(self):
         self.state.quit()

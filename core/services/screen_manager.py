@@ -14,6 +14,7 @@ class ScreenManager:
         return len(self._stack)
 
     def push(self, screen):
+        print("2. Push:", screen)
         self._stack.append(screen)
         screen.open()
 
@@ -25,6 +26,10 @@ class ScreenManager:
         if self.current:
             self.current.resume()
         return screen
+
+    def update(self, dt):
+        if self.current:
+            self.current.update(dt)
 
     def replace(self, screen):
         if self.current:
@@ -38,7 +43,3 @@ class ScreenManager:
     def dispatch(self, event):
         if self.current:
             self.current.handle_input(event)
-
-    def update(self):
-        if self.current:
-            self.current.update()
