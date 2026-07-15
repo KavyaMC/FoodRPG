@@ -20,6 +20,3 @@ class MainMenuScreen(ControlScreen):
 
     def open(self):
         super().open()
-
-    def handle_input(self, event):
-        self.controller.handle_input(event)

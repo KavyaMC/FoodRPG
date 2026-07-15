@@ -1,3 +1,5 @@
+from UI.settings_menu import SettingsScreen
+
 from ..base.controller import Controller
 
 
@@ -12,7 +14,7 @@ class MainMenuController(Controller):
         self.speak("continue your previous game.")
 
     def settings(self):
-        self.speak("Configure your settings.")
+        self.push(SettingsScreen(self.state))
 
     def help(self):
         self.speak("Learn more about the game and How to.")
@@ -21,4 +23,4 @@ class MainMenuController(Controller):
         self.speak("Food RPG, v0.1.0. Developed by KavyaMC.")
 
     def quit(self):
-        self.state.quit()
+        self.game.quit()

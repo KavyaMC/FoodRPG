@@ -7,10 +7,10 @@ class Controller(StateObject):
         self.screen = screen
 
     def push(self, screen):
-        self.screens.push_screen(screen)
+        self.screens.push(screen)
 
     def pop(self):
-        self.screens.pop_screen()
+        self.screens.pop()
 
     def replace(self, screen):
         self.screens.replace_screen(screen)
