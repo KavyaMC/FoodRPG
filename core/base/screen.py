@@ -1,7 +1,9 @@
-class Screen:
-    def __init__(self, state, title="", description=""):
-        self.state = state
+from .state_object import StateObject
 
+
+class Screen(StateObject):
+    def __init__(self, state, title="", description=""):
+        super().__init__(state)
         self.title = title
         self.description = description
 
@@ -12,7 +14,7 @@ class Screen:
         return self.title
 
     def open(self):
-        self.state.speak(self.identity())
+        self.speak(self.identity())
 
     def resume(self):
         pass
@@ -34,11 +36,14 @@ class ControlScreen(Screen):
         self.controls = []
         self.focus_index = 0
 
+    def announce(self):
+        if self.current_control:
+            self.speak(self.current_control.announcement())
+
     @property
     def current_control(self):
         if not self.controls:
             return None
-
         return self.controls[self.focus_index]
 
     def open(self):
@@ -54,16 +59,11 @@ class ControlScreen(Screen):
     def add_controls(self, *controls):
         self.controls.extend(controls)
 
-    def announce(self):
-        if self.current_control:
-            self.state.speak(self.current_control.announcement())
-
     def move_next(self):
         if not self.controls:
             return
 
         self.focus_index = (self.focus_index + 1) % len(self.controls)
-
         self.announce()
 
     def move_previous(self):
@@ -71,7 +71,6 @@ class ControlScreen(Screen):
             return
 
         self.focus_index = (self.focus_index - 1) % len(self.controls)
-
         self.announce()
 
     def activate_current(self):
@@ -104,4 +103,4 @@ class TransitionScreen(Screen):
         if self.on_finish:
             self.on_finish()
         else:
-            self.state.screen_manager.pop()
+            self.screens.pop()

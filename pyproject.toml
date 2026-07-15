@@ -42,7 +42,7 @@ classifiers = [
 
 dependencies = [
     "pygame-ce~=2.5",
-    "prismatoid~=0.16"
+    "prismatoid~=0.17"
 ]
 
 
@@ -63,4 +63,3 @@ testpaths = ["tests"]
 [tool.mypy]
 python_version = "3.14"
 strict = false
-```

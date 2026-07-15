@@ -25,8 +25,8 @@ class Speech:
 
                 if self.ctx.name_of(backend_id).lower() == backend_name.lower():
                     return backend_id
-        except Exception:
-            pass
+        except Exception as e:
+            print("Speech fallback error:", e)
 
         return None
 
@@ -39,16 +39,15 @@ class Speech:
 
             return self.ctx.create_best()
 
-        except Exception:
-            pass
-
+        except Exception as e:
+            print("Speech fallback error:", e)
         try:
             sapi_id = self._find_backend_id("SAPI")
             if sapi_id is not None:
                 return self.ctx.create(sapi_id)
 
-        except Exception:
-            pass
+        except Exception as e:
+            print("Speech fallback error:", e)
 
         return self.ctx.create_best()
 
@@ -62,8 +61,8 @@ class Speech:
 
                 if name in self.BACKENDS and name not in backends:
                     backends.append(name)
-        except Exception:
-            pass
+        except Exception as e:
+            print("Speech fallback error:", e)
 
         return backends
 
@@ -80,6 +79,7 @@ class Speech:
             return None
 
     def speak(self, text, interrupt=False, on_complete=None):
+        print("Engine speaking before:", self.speaking)
         if not self.enabled:
             if on_complete:
                 on_complete()
@@ -89,6 +89,7 @@ class Speech:
             if interrupt and hasattr(self.engine, "stop"):
                 self.engine.stop()
             self.engine.output(text)
+            print("Engine speaking after:", self.speaking)
 
             if on_complete:
                 on_complete()
@@ -102,5 +103,5 @@ class Speech:
                     fallback.output(text)
                     if on_complete:
                         on_complete()
-            except Exception:
-                pass
+            except Exception as e:
+                print("Speech fallback error:", e)

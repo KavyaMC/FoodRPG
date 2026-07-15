@@ -1,7 +1,6 @@
+from core.base.controls import Button
+from core.base.screen import ControlScreen
 from core.controllers.main_menu_controller import MainMenuController
-from UI.controls import Button
-
-from .screen import ControlScreen
 
 
 class MainMenuScreen(ControlScreen):

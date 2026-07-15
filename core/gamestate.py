@@ -3,7 +3,8 @@ from .services.speech import Speech
 
 
 class GameState:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.running = True
         self._init_services()
 

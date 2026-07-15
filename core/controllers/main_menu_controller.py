@@ -1,12 +1,11 @@
 import pygame
 
-from .base_controller import Controller
+from ..base.controller import Controller
 
 
 class MainMenuController(Controller):
     def __init__(self, state, screen):
-        super().__init__(state)
-        self.screen = screen
+        super().__init__(state, screen)
 
     def handle_input(self, event):
         if event.type != pygame.KEYDOWN:
@@ -26,19 +25,16 @@ class MainMenuController(Controller):
                 self.quit()
 
     def new_game(self):
-        pass
+        self.speak("under development. Coming soon.")
 
     def continue_game(self):
-        pass
+        self.speak("under development. Coming soon.")
 
     def settings(self):
-        pass
+        self.speak("under development. Coming soon.")
 
     def help(self):
-        pass
+        self.speak("under development. Coming soon.")
 
     def credits(self):
-        pass
-
-    def quit(self):
-        self.quit()
+        self.speak("Developed by KavyaMC.")

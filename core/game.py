@@ -11,10 +11,7 @@ class Game:
 
         self._init_window()
         self._init_state()
-        self.starting_up = True
-        self.startup_elapsed = 0
-        self.startup_duration = 3000
-        self.startup()
+        self.state.screen_manager.push(MainMenuScreen(self.state))
 
     def _init_window(self):
         self.name = "Food RPG"
@@ -26,30 +23,12 @@ class Game:
         self.clock = pygame.time.Clock()
 
     def _init_state(self):
-        self.state = GameState()
-
-    def startup(self):
-        self.state.screen_manager.push(MainMenuScreen(self.state))
-
-    def update_startup(self, dt):
-        self.startup_elapsed += dt
-
-        if self.startup_elapsed >= self.startup_duration:
-            self.finish_startup()
-
-    def finish_startup(self):
-        self.starting_up = False
-
-        self.state.speak("Startup complete.")
+        self.state = GameState(self)
 
     def run(self):
         while self.state.running:
-            dt = self.clock.tick(30)
+            self.clock.tick(30)
             self.handle_events()
-            if self.starting_up:
-                self.update_startup(dt)
-            else:
-                self.state.screen_manager.update(dt)
             pygame.display.flip()
         pygame.quit()
 
