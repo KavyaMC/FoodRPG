@@ -1,4 +1,4 @@
-import pygame
+from UI.settings_menu import SettingsScreen
 
 from ..base.controller import Controller
 
@@ -7,34 +7,20 @@ class MainMenuController(Controller):
     def __init__(self, state, screen):
         super().__init__(state, screen)
 
-    def handle_input(self, event):
-        if event.type != pygame.KEYDOWN:
-            return
-
-        match event.key:
-            case pygame.K_UP:
-                self.screen.move_previous()
-
-            case pygame.K_DOWN:
-                self.screen.move_next()
-
-            case pygame.K_RETURN | pygame.K_KP_ENTER:
-                self.screen.activate_current()
-
-            case pygame.K_ESCAPE:
-                self.quit()
-
     def new_game(self):
-        self.speak("under development. Coming soon.")
+        self.speak("Start a new game")
 
     def continue_game(self):
-        self.speak("under development. Coming soon.")
+        self.speak("continue your previous game.")
 
     def settings(self):
-        self.speak("under development. Coming soon.")
+        self.push(SettingsScreen(self.state))
 
     def help(self):
-        self.speak("under development. Coming soon.")
+        self.speak("Learn more about the game and How to.")
 
     def credits(self):
-        self.speak("Developed by KavyaMC.")
+        self.speak("Food RPG, v0.1.0. Developed by KavyaMC.")
+
+    def quit(self):
+        self.game.quit()

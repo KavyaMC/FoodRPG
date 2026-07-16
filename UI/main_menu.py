@@ -5,7 +5,7 @@ from core.controllers.main_menu_controller import MainMenuController
 
 class MainMenuScreen(ControlScreen):
     def __init__(self, state):
-        super().__init__(state, title="Main Menu", description="Welcome to main menu")
+        super().__init__(state, title="Main Menu", description="Choose an option")
 
         self.controller = MainMenuController(state, self)
 
@@ -18,5 +18,5 @@ class MainMenuScreen(ControlScreen):
             Button("Quit", self.controller.quit),
         )
 
-    def handle_input(self, event):
-        self.controller.handle_input(event)
+    def open(self):
+        super().open()
