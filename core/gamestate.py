@@ -1,4 +1,6 @@
+from .services.save_load import SaveLoad
 from .services.screen_manager import ScreenManager
+from .services.settings import Settings
 from .services.speech import Speech
 
 
@@ -9,8 +11,14 @@ class GameState:
         self._init_services()
 
     def _init_services(self):
-        self.speech = Speech()
+        self.settings = Settings()
+
+        backend = self.settings.get("speech", "backend", "AUTO")
+        enabled = self.settings.getboolean("speech", "enabled", True)
+
+        self.speech = Speech(mode=backend, enabled=enabled)
         self.screen_manager = ScreenManager()
+        self.save_load = SaveLoad()
 
     def speak(self, text, interrupt=False):
         self.speech.speak(text, interrupt)

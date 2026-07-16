@@ -1,3 +1,5 @@
+from core.controllers.save_slots_controller import SaveSlotMode, SaveSlotsController
+from UI.save_slots_menu import SaveSlotsScreen
 from UI.settings_menu import SettingsScreen
 
 from ..base.controller import Controller
@@ -11,7 +13,10 @@ class MainMenuController(Controller):
         self.speak("Start a new game")
 
     def continue_game(self):
-        self.speak("continue your previous game.")
+        controller = SaveSlotsController(self.state, None, SaveSlotMode.LOAD)
+        screen = SaveSlotsScreen(self.state, controller)
+        controller.screen = screen
+        self.push(screen)
 
     def settings(self):
         self.push(SettingsScreen(self.state))
