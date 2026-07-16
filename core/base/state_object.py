@@ -11,6 +11,14 @@ class StateObject:
         return self.state.screen_manager
 
     @property
+    def settings(self):
+        return self.state.settings
+
+    @property
+    def save_load(self):
+        return self.state.save_load
+
+    @property
     def speech(self):
         return self.state.speech
 

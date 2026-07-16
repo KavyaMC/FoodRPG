@@ -15,6 +15,5 @@ class SettingsScreen(ControlScreen):
 
         self.add_controls(
             Button("Accessibility", self.controller.accessibility),
-            Button("Save", self.controller.save),
             Button("Back", self.controller.back),
         )

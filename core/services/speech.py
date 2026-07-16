@@ -88,8 +88,6 @@ class Speech:
             return None
 
     def speak(self, text, interrupt=False, on_complete=None):
-        print("Engine speaking before:", self.speaking)
-
         if not self.enabled:
             if on_complete:
                 on_complete()
@@ -100,7 +98,6 @@ class Speech:
                 self.engine.stop()
 
             self.engine.output(text)
-            print("Engine speaking after:", self.speaking)
 
             if on_complete:
                 on_complete()
