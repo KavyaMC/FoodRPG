@@ -3,5 +3,5 @@ import os
 from core.services.paths import help_directory
 
 
-def open_help(filename):
+def open_document(filename):
     os.startfile(help_directory() / filename)
