@@ -1,4 +1,4 @@
-# Credits
+    # Credits
 
 ## Food RPG
 
@@ -18,10 +18,6 @@ Kavya
 - Project Management
 
 ## Special Thanks
-
-### Amit Kumar
-
-introducing me to Python and other programming tools.
 
 ### PRISM (Prismatoid)
 
