@@ -1,6 +1,7 @@
 from core.controllers.save_slots_controller import SaveSlotMode, SaveSlotsController
 from core.helpers.document_helper import open_document
 from UI.help_menu import HelpScreen
+from UI.new_game_screen import NewGameScreen
 from UI.save_slots_menu import SaveSlotsScreen
 from UI.settings_menu import SettingsScreen
 
@@ -12,7 +13,7 @@ class MainMenuController(Controller):
         super().__init__(state, screen)
 
     def new_game(self):
-        self.speak("Start a new game")
+        self.push(NewGameScreen(self.state))
 
     def continue_game(self):
         controller = SaveSlotsController(self.state, None, SaveSlotMode.LOAD)
