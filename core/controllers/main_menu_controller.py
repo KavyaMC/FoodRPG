@@ -1,4 +1,5 @@
 from core.controllers.save_slots_controller import SaveSlotMode, SaveSlotsController
+from core.helpers.document_helper import open_document
 from UI.help_menu import HelpScreen
 from UI.save_slots_menu import SaveSlotsScreen
 from UI.settings_menu import SettingsScreen
@@ -26,7 +27,7 @@ class MainMenuController(Controller):
         self.push(HelpScreen(self.state))
 
     def credits(self):
-        self.speak("Food RPG, v0.1.0. Developed by KavyaMC.")
+        open_document("credits.md")
 
     def quit(self):
         self.game.quit()
