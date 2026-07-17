@@ -27,17 +27,33 @@ class SaveSlotsController(Controller):
 
     def save(self, slot):
         if self.save_load.exists(slot):
-            self.speak(f"Slot {slot} already occupied.")
+            notification = self.notify.warning(
+                "Save Slot Occupied", f"Slot {slot} already contains saved data."
+            )
+            self.speak(notification.title)
+            self.speak(notification.message)
             return
 
-        self.speak(f"Saving to slot {slot}")
+        # TODO: Save game data
+
+        notification = self.notify.success("Game Saved", f"Progress saved to Slot {slot}.")
+        self.speak(notification.title)
+        self.speak(notification.message)
 
     def load(self, slot):
         if not self.save_load.exists(slot):
-            self.speak(f"Slot {slot} is empty.")
+            notification = self.notify.warning(
+                "Empty Save Slot", f"Slot {slot} does not contain any saved data."
+            )
+            self.speak(notification.title)
+            self.speak(notification.message)
             return
 
-        self.speak(f"Loading slot {slot}")
+        # TODO: Load game data
+
+        notification = self.notify.info("Loading Game", f"Loading save from Slot {slot}.")
+        self.speak(notification.title)
+        self.speak(notification.message)
 
     def back(self):
         self.pop()

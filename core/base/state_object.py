@@ -19,6 +19,10 @@ class StateObject:
         return self.state.save_load
 
     @property
+    def notify(self):
+        return self.state.notifications
+
+    @property
     def speech(self):
         return self.state.speech
 

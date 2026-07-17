@@ -1,3 +1,4 @@
+from .services.notifications import NotificationService
 from .services.save_load import SaveLoad
 from .services.screen_manager import ScreenManager
 from .services.settings import Settings
@@ -19,6 +20,7 @@ class GameState:
         self.speech = Speech(mode=backend, enabled=enabled)
         self.screen_manager = ScreenManager()
         self.save_load = SaveLoad()
+        self.notifications = NotificationService()
 
     def speak(self, text, interrupt=False):
         self.speech.speak(text, interrupt)
