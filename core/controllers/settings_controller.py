@@ -10,8 +10,5 @@ class SettingsController(Controller):
     def accessibility(self):
         self.push(AccessibilityScreen(self.state))
 
-    def save(self):
-        self.speak("Settings saved.")
-
     def back(self):
         self.pop()
