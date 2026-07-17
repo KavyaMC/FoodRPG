@@ -1,14 +1,13 @@
 import json
 
-from .paths import app_directory
+from .paths import slots_directory
 
 
 class SaveLoad:
     SLOT_COUNT = 4
 
     def __init__(self):
-        self.directory = app_directory() / "slots"
-        self.directory.mkdir(parents=True, exist_ok=True)
+        self.directory = slots_directory()
         self._create_slots()
 
     def _create_slots(self):

@@ -1,29 +1,38 @@
 from configparser import ConfigParser
 
-from .paths import app_directory
+from .paths import settings_file
 
 
 class Settings:
     def __init__(self):
+        self.path = settings_file()
         self.config = ConfigParser()
-        self.path = app_directory() / "settings.ini"
-        self.load()
+
+        if self.path.exists():
+            self.config.read(self.path)
+
+        self._create_defaults()
+        self.save()
 
     def _create_defaults(self):
-        self.config["speech"] = {
-            "backend": "AUTO",
-            "enabled": "true",
-        }
-        self.save()
+        if not self.config.has_section("speech"):
+            self.config.add_section("speech")
+
+        if not self.config.has_option("speech", "backend"):
+            self.config.set("speech", "backend", "AUTO")
+
+        if not self.config.has_option("speech", "enabled"):
+            self.config.set("speech", "enabled", "true")
 
     def load(self):
         if self.path.exists():
             self.config.read(self.path)
         else:
             self._create_defaults()
+            self.save()
 
     def save(self):
-        with self.path.open("w") as file:
+        with self.path.open("w", encoding="utf-8") as file:
             self.config.write(file)
 
     def get(self, section, option, default=""):
@@ -63,3 +72,5 @@ class Settings:
             option,
             str(value),
         )
+
+        self.save()
