@@ -1,0 +1,25 @@
+{
+    "ownership_model": "Entrepreneur",
+    "starting_balance": 10000,
+    "currency": "coins",
+    "business_name": "",
+    "player_name": "",
+    "difficulty": "Normal",
+    "reputation": 0,
+    "experience": 0,
+    "level": 1,
+    "current_location": "",
+    "notifications_enabled": true,
+    "tutorial_completed": false,
+    "tutorial_step": 0,
+    "active_businesses": [],
+    "achievements": [],
+    "statistics": {
+        "money_earned": 0,
+        "money_spent": 0,
+        "contracts_completed": 0,
+        "goods_sold": 0,
+        "goods_delivered": 0,
+        "businesses_owned": 0
+    }
+}

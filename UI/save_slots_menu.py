@@ -15,15 +15,9 @@ class SaveSlotsScreen(ControlScreen):
 
     def _build(self):
         for slot in range(1, self.SLOT_COUNT + 1):
-            occupied = self.controller.save_load.exists(slot)
-
-            label = f"Slot {slot}"
-
-            if occupied:
-                label += " (Occupied)"
-            else:
-                label += " (Empty)"
-
-            self.add_controls(Button(label, lambda s=slot: self.controller.slot_selected(s)))
-
-        self.add_control(Button("Back", self.controller.back))
+            self.add_controls(
+                Button(
+                    self.controller.slot_label(slot),
+                    lambda s=slot: self.controller.slot_selected(s),
+                )
+            )
