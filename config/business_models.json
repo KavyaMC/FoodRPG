@@ -1,0 +1,221 @@
+{
+    "sectors": {
+        "Agro": {
+            "categories": {
+                "Farm": {
+                    "types": {
+                        "Poultry Farm": {
+                            "models": [
+                                "Small Farm",
+                                "Medium Farm",
+                                "Large Farm"
+                            ]
+                        },
+                        "Dairy Farm": {
+                            "models": [
+                                "Small Dairy",
+                                "Commercial Dairy"
+                            ]
+                        },
+                        "Fish Farm": {
+                            "models": [
+                                "Small Fish Farm",
+                                "Commercial Fish Farm"
+                            ]
+                        },
+                        "Ranch": {
+                            "models": [
+                                "Small Ranch",
+                                "Large Ranch"
+                            ]
+                        },
+                        "Aviary": {
+                            "models": [
+                                "Small Aviary",
+                                "Large Aviary"
+                            ]
+                        }
+                    }
+                },
+                "Cultivation": {
+                    "types": {
+                        "Orchard": {
+                            "models": [
+                                "Small Orchard",
+                                "Large Orchard"
+                            ]
+                        },
+                        "Plantation": {
+                            "models": [
+                                "Small Plantation",
+                                "Large Plantation"
+                            ]
+                        },
+                        "Cropland": {
+                            "models": [
+                                "Small Field",
+                                "Large Field"
+                            ]
+                        },
+                        "Berry Patch": {
+                            "models": [
+                                "Small Patch",
+                                "Large Patch"
+                            ]
+                        },
+                        "Flower Bed": {
+                            "models": [
+                                "Small Garden",
+                                "Large Garden"
+                            ]
+                        },
+                        "Vineyard": {
+                            "models": [
+                                "Small Vineyard",
+                                "Large Vineyard"
+                            ]
+                        },
+                        "Herb Garden": {
+                            "models": [
+                                "Small Garden",
+                                "Large Garden"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "Hospitality": {
+            "categories": {
+                "Cafe": {
+                    "types": {
+                        "Coffee Cart": {
+                            "models": [
+                                "Cart",
+                                "Pop-up Tent",
+                                "Food Truck",
+                                "Specialty Caravan"
+                            ]
+                        },
+                        "Cafe": {
+                            "models": [
+                                "Cafe",
+                                "Cafe Bakery"
+                            ]
+                        }
+                    }
+                },
+                "Restaurant": {
+                    "types": {
+                        "Food Truck": {
+                            "models": [
+                                "Truck",
+                                "Caravan"
+                            ]
+                        },
+                        "Restaurant": {
+                            "models": [
+                                "Outlet",
+                                "Restaurant",
+                                "Fine Dining"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "Industrial": {
+            "categories": {
+                "Processing": {
+                    "types": {
+                        "Pasteurization Unit": {
+                            "models": [
+                                "Small Unit",
+                                "Industrial Unit"
+                            ]
+                        },
+                        "Flour Mill": {
+                            "models": [
+                                "Small Mill",
+                                "Large Mill"
+                            ]
+                        },
+                        "Jam Factory": {
+                            "models": [
+                                "Small Factory",
+                                "Large Factory"
+                            ]
+                        },
+                        "Ice Cream Factory": {
+                            "models": [
+                                "Small Factory",
+                                "Large Factory"
+                            ]
+                        },
+                        "Chocolate Factory": {
+                            "models": [
+                                "Small Factory",
+                                "Large Factory"
+                            ]
+                        },
+                        "Bread Factory": {
+                            "models": [
+                                "Small Bakery Plant",
+                                "Industrial Bakery"
+                            ]
+                        },
+                        "Noodle Factory": {
+                            "models": [
+                                "Small Plant",
+                                "Large Plant"
+                            ]
+                        },
+                        "Rice Mill": {
+                            "models": [
+                                "Small Mill",
+                                "Large Mill"
+                            ]
+                        },
+                        "Honey Processing Facility": {
+                            "models": [
+                                "Small Facility",
+                                "Large Facility"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "Retail": {
+            "categories": {
+                "Food Retail": {
+                    "types": {
+                        "Bakery Store": {
+                            "models": [
+                                "Bakery Stall",
+                                "Store Front Counter",
+                                "Convenience Store"
+                            ]
+                        },
+                        "Grocery Store": {
+                            "models": [
+                                "Departmental Store",
+                                "Supermarket"
+                            ]
+                        },
+                        "Food Store": {
+                            "models": [
+                                "Specialty Store",
+                                "Food Outlet"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "ownership_models": [
+        "Entrepreneur",
+        "Estate"
+    ]
+}

@@ -44,16 +44,6 @@ class ControlScreen(Screen):
         self.controls = []
         self.focus_index = 0
 
-    def announce(self):
-        if self.current_control:
-            self.speak(self.current_control.announce())
-
-    @property
-    def current_control(self):
-        if not self.controls:
-            return None
-        return self.controls[self.focus_index]
-
     def open(self):
         super().open()
         self.announce()
@@ -61,11 +51,24 @@ class ControlScreen(Screen):
     def resume(self):
         self.announce()
 
+    def announce(self):
+        if self.current_control:
+            self.current_control.announce_self()
+
+    @property
+    def current_control(self):
+        if not self.controls:
+            return None
+        return self.controls[self.focus_index]
+
     def add_control(self, control):
+        control.announce_callback = self.speak
         self.controls.append(control)
 
     def add_controls(self, *controls):
-        self.controls.extend(controls)
+        for control in controls:
+            control.announce_callback = self.speak
+            self.controls.append(control)
 
     def move_next(self):
         if not self.controls:
