@@ -6,6 +6,7 @@ from core.controllers.save_slots_controller import (
     SaveSlotMode,
     SaveSlotsController,
 )
+from core.models.gameplay_session import Session
 from core.models.player import Player
 from UI.save_slots_menu import SaveSlotsScreen
 
@@ -70,11 +71,13 @@ class NewGameController(Controller):
             self.speak(notification.message)
             return
 
+        session = Session(player=player)
+        self.state.session = session
+
         controller = SaveSlotsController(
             self.state,
             None,
             SaveSlotMode.SAVE,
-            player,
         )
 
         screen = SaveSlotsScreen(

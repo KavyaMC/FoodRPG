@@ -9,6 +9,7 @@ class GameState:
     def __init__(self, game):
         self.game = game
         self.running = True
+        self.session = None
         self._init_services()
 
     def _init_services(self):
