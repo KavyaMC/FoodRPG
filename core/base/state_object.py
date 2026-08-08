@@ -23,6 +23,10 @@ class StateObject:
         return self.state.notifications
 
     @property
+    def session(self):
+        return self.state.session
+
+    @property
     def speech(self):
         return self.state.speech
 

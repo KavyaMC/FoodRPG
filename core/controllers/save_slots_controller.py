@@ -1,6 +1,6 @@
 from enum import Enum
 
-from core.models.player import Player
+from core.models.gameplay_session import Session
 
 from ..base.controller import Controller
 
@@ -11,10 +11,10 @@ class SaveSlotMode(Enum):
 
 
 class SaveSlotsController(Controller):
-    def __init__(self, state, screen, mode, player=None):
+    def __init__(self, state, screen, mode):
         super().__init__(state, screen)
+
         self.mode = mode
-        self.player = player
         self.pending_overwrite = None
 
     @property
@@ -36,9 +36,9 @@ class SaveSlotsController(Controller):
         if not data:
             return f"Slot {slot} (Empty)"
 
-        player = Player.from_dict(data)
+        session = Session.from_dict(data)
 
-        return f"Slot {slot}: {player.player_name} - {player.business_name}"
+        return f"Slot {slot}: {session.player_name} - {session.business_name}"
 
     def save(self, slot):
         if self.save_load.exists(slot):
@@ -47,7 +47,7 @@ class SaveSlotsController(Controller):
 
                 notification = self.notify.warning(
                     "Save Slot Occupied",
-                    f"Press Enter again to overwrite Slot {slot}. Press Escape to cancel.",
+                    (f"Press Enter again to overwrite Slot {slot}. Press Escape to cancel."),
                 )
 
                 self.speak(notification.title)
@@ -56,11 +56,9 @@ class SaveSlotsController(Controller):
 
         self.pending_overwrite = None
 
-        self.player.validate()
-
         self.save_load.save(
             slot,
-            self.player.to_dict(),
+            self.session.to_dict(),
         )
 
         notification = self.notify.success(
@@ -71,9 +69,8 @@ class SaveSlotsController(Controller):
         self.speak(notification.title)
         self.speak(notification.message)
 
-        # to do
-        # push this to gameplay
-        # destroy all screen and handle control to gameplay
+        # TODO:
+        # Transition to Gameplay.
 
     def load(self, slot):
         if not self.save_load.exists(slot):
@@ -88,15 +85,19 @@ class SaveSlotsController(Controller):
 
         data = self.save_load.load(slot)
 
-        self.state.player = self.player = Player.from_dict(data)
+        session = Session.from_dict(data)
+        self.state.session = session
 
         notification = self.notify.success(
             "Game Loaded",
-            f"Welcome back {self.player.player_name}.",
+            f"Welcome back {session.player_name}.",
         )
 
         self.speak(notification.title)
         self.speak(notification.message)
+
+        # TODO:
+        # Transition to Gameplay.
 
         self.pop()
 
