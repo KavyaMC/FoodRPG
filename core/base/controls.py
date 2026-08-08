@@ -350,6 +350,7 @@ class LabelField(Control):
         announce=None,
     ):
         super().__init__(label, announce)
+
         self.value = value
 
     def announce(self):

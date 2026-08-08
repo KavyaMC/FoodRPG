@@ -1,6 +1,7 @@
 from enum import Enum
 
 from core.models.gameplay_session import Session
+from UI.gameplay_menu import GameplayScreen
 
 from ..base.controller import Controller
 
@@ -40,6 +41,12 @@ class SaveSlotsController(Controller):
 
         return f"Slot {slot}: {session.player_name} - {session.business_name}"
 
+    def enter_gameplay(self):
+        gameplay_screen = GameplayScreen(self.state)
+
+        self.screens.clear()
+        self.screens.push(gameplay_screen)
+
     def save(self, slot):
         if self.save_load.exists(slot):
             if self.pending_overwrite != slot:
@@ -68,9 +75,7 @@ class SaveSlotsController(Controller):
 
         self.speak(notification.title)
         self.speak(notification.message)
-
-        # TODO:
-        # Transition to Gameplay.
+        self.enter_gameplay()
 
     def load(self, slot):
         if not self.save_load.exists(slot):
@@ -95,11 +100,7 @@ class SaveSlotsController(Controller):
 
         self.speak(notification.title)
         self.speak(notification.message)
-
-        # TODO:
-        # Transition to Gameplay.
-
-        self.pop()
+        self.enter_gameplay()
 
     def back(self):
         self.pop()
