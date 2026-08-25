@@ -1,19 +1,19 @@
 import pygame
 
+KEYDOWN = pygame.KEYDOWN
 
-class KeyBindings:
-    @staticmethod
-    def is_next_panel(event):
-        return (
-            event.type == pygame.KEYDOWN
-            and event.key == pygame.K_F6
-            and not (event.mod & pygame.KMOD_RSHIFT)
-        )
+UP = (pygame.K_UP,)
+DOWN = (pygame.K_DOWN,)
+LEFT = (pygame.K_LEFT,)
+RIGHT = (pygame.K_RIGHT,)
 
-    @staticmethod
-    def is_previous_panel(event):
-        return (
-            event.type == pygame.KEYDOWN
-            and event.key == pygame.K_F6
-            and (event.mod & pygame.KMOD_RSHIFT)
-        )
+ACTIVATE_KEYS = (
+    pygame.K_RETURN,
+    pygame.K_KP_ENTER,
+    pygame.K_SPACE,
+)
+
+BACK_KEYS = (
+    pygame.K_ESCAPE,
+    pygame.K_BACKSPACE,
+)

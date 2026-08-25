@@ -33,7 +33,8 @@ class ScreenManager:
 
     def clear(self):
         while self._stack:
-            self.pop()
+            screen = self._stack.pop()
+            screen.close()
 
     def dispatch(self, event):
         if self.current:

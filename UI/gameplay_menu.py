@@ -2,7 +2,6 @@ from core.base.controls import Button
 from core.base.screen import ControlScreen
 from core.controllers.gameplay_controller import GameplayController
 
-
 class GameplayScreen(ControlScreen):
     def __init__(self, state):
         super().__init__(

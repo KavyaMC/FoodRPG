@@ -14,10 +14,16 @@ class SaveSlotsScreen(ControlScreen):
         self._build()
 
     def _build(self):
-        for slot in range(1, self.SLOT_COUNT + 1):
+        for slot in range(
+            1,
+            self.SLOT_COUNT + 1,
+        ):
             self.add_controls(
                 Button(
                     self.controller.slot_label(slot),
                     lambda s=slot: self.controller.slot_selected(s),
                 )
             )
+
+    def back(self):
+        self.controller.back()
