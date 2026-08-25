@@ -1,5 +1,4 @@
 import pygame
-
 from core.keybindings import (
     ACTIVATE_KEYS,
     BACK_KEYS,

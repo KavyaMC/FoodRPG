@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from core.gameplay.gameplay_mode import GameplayMode
-from core.models.player import Player
+from core.gameplay.mode import GameplayMode
+from core.player.info import Player
 
 
 @dataclass(slots=True)

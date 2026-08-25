@@ -1,0 +1,32 @@
+DEFAULT_START_DAY = 1
+DEFAULT_START_HOUR = 6
+DEFAULT_START_MINUTE = 0
+
+DEFAULT_LOCATION = ""
+DEFAULT_OBJECTIVE = ""
+DEFAULT_CURRENT_TASK = ""
+DEFAULT_CURRENT_ACTIVITY = ""
+
+DEFAULT_TUTORIAL_COMPLETED = False
+DEFAULT_PLAY_TIME_SECONDS = 0
+
+STARTER_ESTABLISHMENTS = {
+    "Dairy Farm": "Shed",
+    "Poultry Farm": "Coop",
+    "Fishery": "Pond",
+    "Ranch": "Ranch",
+    "Aviary": "Aviary",
+    "Cropland": "Crop Field",
+    "Plantation": "Plantation Plot",
+    "Orchard": "Orchard Plot",
+    "Berry Patch": "Berry Patch",
+    "Herb Garden": "Herb Garden",
+    "Flower Garden": "Flower Garden",
+    "Cafe": "Cafe Cart",
+    "Bakery": "Bakery Counter",
+    "Restaurant": "Food Stall",
+    "Quick Service Restaurant": "Food truck",
+    "Juice Bar": "Juice Cart",
+    "Club": "Club",
+    "Ice Cream Shack": "Ice Cream Cart",
+}
