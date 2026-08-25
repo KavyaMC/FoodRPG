@@ -1,5 +1,15 @@
 import pygame
 
+from core.keybindings import (
+    ACTIVATE_KEYS,
+    BACK_KEYS,
+    DOWN,
+    KEYDOWN,
+    LEFT,
+    RIGHT,
+    UP,
+)
+
 
 class Control:
     def __init__(self, label, announce=None):
@@ -36,6 +46,7 @@ class Control:
 class Button(Control):
     def __init__(self, label, action, announce=None):
         super().__init__(label, announce)
+
         self.action = action
 
     def activate(self):
@@ -57,6 +68,7 @@ class Toggle(Control):
 
     def announce(self):
         state = "On" if self.value else "Off"
+
         return f"{self.label}. {state}"
 
     def toggle(self):
@@ -83,7 +95,15 @@ class ComboBox(Control):
         super().__init__(label, announce)
 
         self.options = list(options)
-        self.index = index if options else 0
+
+        if self.options:
+            self.index = min(
+                max(index, 0),
+                len(self.options) - 1,
+            )
+        else:
+            self.index = 0
+
         self.highlight = self.index
         self.expanded = False
 
@@ -97,14 +117,21 @@ class ComboBox(Control):
     def value(self):
         if not self.options:
             return ""
+
         return self.options[self.index]
 
     def set_options(self, options):
         self.options = list(options)
+
         self.index = 0
         self.highlight = 0
         self.expanded = False
-        self.announce_self()
+
+        if self.options:
+            if self.on_changed:
+                self.on_changed(self.value)
+
+            self.announce_self()
 
     def set_value(self, value):
         if value not in self.options:
@@ -120,14 +147,15 @@ class ComboBox(Control):
 
     def announce(self):
         if not self.options:
-            return f"{self.label}. No options available."
+            return self.label
 
         if self.expanded:
             return (
                 f"{self.label}. "
                 f"Selecting. "
                 f"{self.options[self.highlight]}. "
-                f"{self.highlight + 1} of {len(self.options)}."
+                f"{self.highlight + 1} of "
+                f"{len(self.options)}."
             )
 
         return f"{self.label}. {self.value}"
@@ -140,48 +168,50 @@ class ComboBox(Control):
         if not self.expanded:
             self.expanded = True
             self.highlight = self.index
+
             self.announce_self()
             return
 
         self.index = self.highlight
+        self.expanded = False
 
         if self.on_changed:
             self.on_changed(self.value)
 
-        self.expanded = False
         self.announce_self()
 
     def handle_input(self, event):
-        if event.type != pygame.KEYDOWN:
+        if event.type != KEYDOWN:
             return
 
-        match event.key:
-            case pygame.K_UP:
-                if self.options:
-                    self.highlight = (self.highlight - 1) % len(self.options)
-                    self.speak(self.options[self.highlight])
+        if event.key in UP:
+            self._move_highlight(-1)
+            return
 
-            case pygame.K_DOWN:
-                if self.options:
-                    self.highlight = (self.highlight + 1) % len(self.options)
-                    self.speak(self.options[self.highlight])
+        if event.key in DOWN:
+            self._move_highlight(1)
+            return
 
-            case pygame.K_HOME:
-                if self.options:
-                    self.highlight = 0
-                    self.speak(self.options[self.highlight])
+        if event.key in ACTIVATE_KEYS:
+            self.activate()
+            return
 
-            case pygame.K_END:
-                if self.options:
-                    self.highlight = len(self.options) - 1
-                    self.speak(self.options[self.highlight])
-
-            case pygame.K_RETURN | pygame.K_KP_ENTER:
-                self.activate()
-
-            case pygame.K_ESCAPE:
+        if event.key in BACK_KEYS:
+            if self.expanded:
                 self.expanded = False
+                self.highlight = self.index
                 self.announce_self()
+
+    def _move_highlight(self, direction):
+        if not self.options:
+            return
+
+        if not self.expanded:
+            return
+
+        self.highlight = (self.highlight + direction) % len(self.options)
+
+        self.speak(self.options[self.highlight])
 
 
 class TextField(Control):
@@ -231,15 +261,23 @@ class TextField(Control):
             self.speak("End of text.")
             return
 
-        self.speak(self.value[self.cursor])
+        character = self.value[self.cursor]
+
+        if character == " ":
+            self.speak("Space.")
+        else:
+            self.speak(character)
 
     def activate(self):
         if not self.editing:
             self.original_value = self.value
             self.cursor = len(self.value)
             self.editing = True
+
             self.speak(f"Editing {self.label}.")
+
             self.speak(self.value if self.value else self.placeholder)
+
             return
 
         self.editing = False
@@ -256,9 +294,12 @@ class TextField(Control):
 
         self.value = self.value[: self.cursor] + character + self.value[self.cursor :]
 
-        self.cursor += len(character)
+        self.cursor += 1
 
-        self.speak(character)
+        if character == " ":
+            self.speak("Space.")
+        else:
+            self.speak(character)
 
     def backspace(self):
         if self.cursor == 0:
@@ -271,7 +312,10 @@ class TextField(Control):
 
         self.cursor -= 1
 
-        self.speak(f"Deleted {deleted}")
+        if deleted == " ":
+            self.speak("Deleted space.")
+        else:
+            self.speak(f"Deleted {deleted}.")
 
     def delete(self):
         if self.cursor >= len(self.value):
@@ -282,7 +326,10 @@ class TextField(Control):
 
         self.value = self.value[: self.cursor] + self.value[self.cursor + 1 :]
 
-        self.speak(f"Deleted {deleted}")
+        if deleted == " ":
+            self.speak("Deleted space.")
+        else:
+            self.speak(f"Deleted {deleted}.")
 
     def left(self):
         if self.cursor > 0:
@@ -296,50 +343,53 @@ class TextField(Control):
 
         self.announce_cursor()
 
-    def home(self):
-        self.cursor = 0
-        self.speak("Beginning of text.")
-
-    def end(self):
-        self.cursor = len(self.value)
-        self.speak("End of text.")
-
     def handle_input(self, event):
-        if event.type != pygame.KEYDOWN:
+        if event.type != KEYDOWN:
             return
 
-        match event.key:
-            case pygame.K_RETURN | pygame.K_KP_ENTER:
-                self.activate()
+        # Text editing gets first priority.
+        if event.key == pygame.K_BACKSPACE:
+            self.backspace()
+            return
 
-            case pygame.K_ESCAPE:
-                self.value = self.original_value
-                self.cursor = len(self.value)
-                self.editing = False
-                self.speak("Changes discarded.")
-                self.announce_self()
+        if event.key == pygame.K_DELETE:
+            self.delete()
+            return
 
-            case pygame.K_BACKSPACE:
-                self.backspace()
+        if event.key in LEFT:
+            self.left()
+            return
 
-            case pygame.K_DELETE:
-                self.delete()
+        if event.key in RIGHT:
+            self.right()
+            return
 
-            case pygame.K_LEFT:
-                self.left()
+        # Space must be inserted while editing.
+        if event.key == pygame.K_SPACE:
+            self.insert(" ")
+            return
 
-            case pygame.K_RIGHT:
-                self.right()
+        # Enter confirms the edit.
+        if event.key in (
+            pygame.K_RETURN,
+            pygame.K_KP_ENTER,
+        ):
+            self.activate()
+            return
 
-            case pygame.K_HOME:
-                self.home()
+        # Escape cancels the edit.
+        if event.key == pygame.K_ESCAPE:
+            self.value = self.original_value
+            self.cursor = len(self.value)
+            self.editing = False
 
-            case pygame.K_END:
-                self.end()
+            self.speak("Changes discarded.")
 
-            case _:
-                if event.unicode and event.unicode.isprintable():
-                    self.insert(event.unicode)
+            self.announce_self()
+            return
+
+        if event.unicode and event.unicode.isprintable():
+            self.insert(event.unicode)
 
 
 class LabelField(Control):

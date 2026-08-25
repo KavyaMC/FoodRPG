@@ -13,7 +13,7 @@ class Controller(StateObject):
         self.screens.pop()
 
     def replace(self, screen):
-        self.screens.replace_screen(screen)
+        self.screens.replace(screen)
 
     def update(self):
         pass

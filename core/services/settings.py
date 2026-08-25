@@ -18,11 +18,25 @@ class Settings:
         if not self.config.has_section("speech"):
             self.config.add_section("speech")
 
-        if not self.config.has_option("speech", "backend"):
-            self.config.set("speech", "backend", "AUTO")
+        if not self.config.has_option(
+            "speech",
+            "backend",
+        ):
+            self.config.set(
+                "speech",
+                "backend",
+                "AUTO",
+            )
 
-        if not self.config.has_option("speech", "enabled"):
-            self.config.set("speech", "enabled", "true")
+        if not self.config.has_option(
+            "speech",
+            "verbosity",
+        ):
+            self.config.set(
+                "speech",
+                "verbosity",
+                "Normal",
+            )
 
     def load(self):
         if self.path.exists():
@@ -32,38 +46,66 @@ class Settings:
             self.save()
 
     def save(self):
-        with self.path.open("w", encoding="utf-8") as file:
+        with self.path.open(
+            "w",
+            encoding="utf-8",
+        ) as file:
             self.config.write(file)
 
-    def get(self, section, option, default=""):
+    def get(
+        self,
+        section,
+        option,
+        default="",
+    ):
         return self.config.get(
             section,
             option,
             fallback=str(default),
         )
 
-    def getboolean(self, section, option, default=False):
+    def getboolean(
+        self,
+        section,
+        option,
+        default=False,
+    ):
         return self.config.getboolean(
             section,
             option,
             fallback=default,
         )
 
-    def getint(self, section, option, default=0):
+    def getint(
+        self,
+        section,
+        option,
+        default=0,
+    ):
         return self.config.getint(
             section,
             option,
             fallback=default,
         )
 
-    def getfloat(self, section, option, default=0.0):
+    def getfloat(
+        self,
+        section,
+        option,
+        default=0.0,
+    ):
         return self.config.getfloat(
             section,
             option,
             fallback=default,
         )
 
-    def set(self, section, option, value):
+    def set(
+        self,
+        section,
+        option,
+        value,
+    ):
         if not self.config.has_section(section):
             self.config.add_section(section)
 

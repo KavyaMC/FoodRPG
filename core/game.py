@@ -39,5 +39,11 @@ class Game:
                 return
             self.state.screen_manager.dispatch(event)
 
+    def return_to_main_menu(self):
+        self.state.screen_manager.clear()
+        self.state.screen_manager.push(
+            MainMenuScreen(self.state),
+        )
+
     def quit(self):
         self.state.running = False

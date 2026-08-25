@@ -1,41 +1,37 @@
 from core.base.controls import Button
 from core.base.screen import ControlScreen
-from core.controllers.main_menu_controller import MainMenuController
+from core.controllers.resume_controller import ResumeController
 
 
-class MainMenuScreen(ControlScreen):
+class ResumeScreen(ControlScreen):
     def __init__(self, state):
         super().__init__(
             state,
-            title="Main Menu",
+            title="Game Paused",
             description="Choose an option",
         )
 
-        self.controller = MainMenuController(
+        self.controller = ResumeController(
             state,
             self,
         )
 
         self.add_controls(
             Button(
-                "New Game",
-                self.controller.new_game,
+                "Back",
+                self.controller.back,
             ),
             Button(
-                "Load Game",
-                self.controller.load_game,
+                "Save",
+                self.controller.save,
             ),
             Button(
                 "Settings",
                 self.controller.settings,
             ),
             Button(
-                "Documentation",
-                self.controller.help,
-            ),
-            Button(
-                "Credits",
-                self.controller.credits,
+                "Return to Main Menu",
+                self.controller.return_to_menu,
             ),
             Button(
                 "Quit",

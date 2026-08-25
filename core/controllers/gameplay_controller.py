@@ -1,4 +1,5 @@
 from core.base.controller import Controller
+from UI.resume_screen import ResumeScreen
 from UI.status_menu import SessionScreen
 
 
@@ -7,7 +8,9 @@ class GameplayController(Controller):
         super().__init__(state, screen)
 
     def options(self):
-        self.speak("Not implemented yet")
+        self.push(
+            ResumeScreen(self.state),
+        )
 
     def session(self):
         self.push(SessionScreen(self.state))

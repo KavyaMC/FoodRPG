@@ -1,7 +1,7 @@
+from collections.abc import Callable
 from enum import Enum
 
 from core.models.gameplay_session import Session
-from UI.gameplay_menu import GameplayScreen
 
 from ..base.controller import Controller
 
@@ -17,16 +17,22 @@ class SaveSlotsController(Controller):
 
         self.mode = mode
         self.pending_overwrite = None
+        self.on_saved: Callable[[int], None] | None = None
+        self.on_loaded: Callable[[Session], None] | None = None
 
     @property
     def title(self):
-        return "Choose Save Slot" if self.mode == SaveSlotMode.SAVE else "Load Game"
+        if self.mode == SaveSlotMode.SAVE:
+            return "Choose Save Slot"
+
+        return "Load Game"
 
     def slot_selected(self, slot):
         if self.mode == SaveSlotMode.SAVE:
             self.save(slot)
-        else:
-            self.load(slot)
+            return
+
+        self.load(slot)
 
     def slot_label(self, slot):
         if not self.save_load.exists(slot):
@@ -39,15 +45,19 @@ class SaveSlotsController(Controller):
 
         session = Session.from_dict(data)
 
-        return f"Slot {slot}: {session.player_name} - {session.business_name}"
-
-    def enter_gameplay(self):
-        gameplay_screen = GameplayScreen(self.state)
-
-        self.screens.clear()
-        self.screens.push(gameplay_screen)
+        return f"Slot {slot}: {session.player.player_name} - {session.player.business_name}"
 
     def save(self, slot):
+        if not self.state.session:
+            notification = self.notify.error(
+                "Save Failed",
+                "There is no active game session to save.",
+            )
+
+            self.speak(notification.title)
+            self.speak(notification.message)
+            return
+
         if self.save_load.exists(slot):
             if self.pending_overwrite != slot:
                 self.pending_overwrite = slot
@@ -65,7 +75,7 @@ class SaveSlotsController(Controller):
 
         self.save_load.save(
             slot,
-            self.session.to_dict(),
+            self.state.session.to_dict(),
         )
 
         notification = self.notify.success(
@@ -75,7 +85,12 @@ class SaveSlotsController(Controller):
 
         self.speak(notification.title)
         self.speak(notification.message)
-        self.enter_gameplay()
+
+        if self.on_saved:
+            self.on_saved(slot)
+            return
+
+        self.pop()
 
     def load(self, slot):
         if not self.save_load.exists(slot):
@@ -90,17 +105,34 @@ class SaveSlotsController(Controller):
 
         data = self.save_load.load(slot)
 
+        if not data:
+            notification = self.notify.warning(
+                "Empty Save Slot",
+                f"Slot {slot} does not contain any saved data.",
+            )
+
+            self.speak(notification.title)
+            self.speak(notification.message)
+            return
+
         session = Session.from_dict(data)
+
         self.state.session = session
 
         notification = self.notify.success(
             "Game Loaded",
-            f"Welcome back {session.player_name}.",
+            (f"Welcome back {session.player.player_name}."),
         )
 
         self.speak(notification.title)
         self.speak(notification.message)
-        self.enter_gameplay()
+
+        if self.on_loaded:
+            self.on_loaded(session)
+            return
+
+        self.pop()
 
     def back(self):
+        self.pending_overwrite = None
         self.pop()
