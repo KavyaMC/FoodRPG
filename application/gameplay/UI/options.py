@@ -1,9 +1,11 @@
-from core.base.controls import Button
-from core.base.screen import ControlScreen
-from core.controllers.resume_controller import ResumeController
+from application.base.controls import Button
+from application.base.screen import ControlScreen
+from application.gameplay.controllers.options_controller import (
+    GameplayOptionsController,
+)
 
 
-class ResumeScreen(ControlScreen):
+class OptionsScreen(ControlScreen):
     def __init__(self, state):
         super().__init__(
             state,
@@ -11,16 +13,13 @@ class ResumeScreen(ControlScreen):
             description="Choose an option",
         )
 
-        self.controller = ResumeController(
+        self.controller = GameplayOptionsController(
             state,
             self,
         )
 
         self.add_controls(
-            Button(
-                "Back",
-                self.controller.back,
-            ),
+            Button("Continue", self.controller.continue_game),
             Button(
                 "Save",
                 self.controller.save,

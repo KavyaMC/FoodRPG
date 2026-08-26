@@ -1,8 +1,8 @@
-from core.base.controls import LabelField
-from core.base.screen import ControlScreen
+from application.base.controls import LabelField
+from application.base.screen import ControlScreen
 
 
-class SessionScreen(ControlScreen):
+class StatusScreen(ControlScreen):
     def __init__(self, state):
         super().__init__(
             state,
@@ -10,16 +10,16 @@ class SessionScreen(ControlScreen):
             description="Current game session",
         )
 
-        session = state.session
+        session = state.gameplay.session
 
         self.add_controls(
             LabelField(
-                "Day",
-                str(session.day),
+                "Date",
+                session.date,
             ),
             LabelField(
                 "Time",
-                f"{session.hour:02}:{session.minute:02}",
+                session.time,
             ),
             LabelField(
                 "Location",

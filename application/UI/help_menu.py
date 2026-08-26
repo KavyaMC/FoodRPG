@@ -1,6 +1,6 @@
-from core.base.controls import Button
-from core.base.screen import ControlScreen
-from core.controllers.help_controller import HelpController
+from application.base.controls import Button
+from application.base.screen import ControlScreen
+from application.controllers.help_controller import HelpController
 
 
 class HelpScreen(ControlScreen):
@@ -15,6 +15,7 @@ class HelpScreen(ControlScreen):
             Button("Keyboard Shortcuts", self.controller.keyboard_shortcuts),
             Button("Accessibility", self.controller.accessibility),
             Button("Installation", self.controller.installation),
+            Button("credits", self.controller.credits),
             Button("About", self.controller.about),
             Button("Back", self.controller.back),
         )

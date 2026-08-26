@@ -1,4 +1,4 @@
-from core.base.screen import InteractionScreen
+from application.base.screen import InteractionScreen
 
 
 class TutorialScreen(InteractionScreen):
@@ -9,22 +9,22 @@ class TutorialScreen(InteractionScreen):
             description=[
                 (
                     "Welcome to FoodRPG. "
-                    "Congrats on completing Business registration "
-                    "and welcome to managing it."
+                    "Business registration is complete. "
+                    "You can now begin managing your business."
                 ),
                 (
-                    "Your gameplay screen contains the actions "
-                    "available to you at your current stage of the game."
+                    "The gameplay screen contains the actions "
+                    "available at your current stage of the game."
                 ),
                 (
                     "Select an action and press Enter to activate it. "
-                    "Use Escape to return to the gameplay screen."
+                    "Press Escape to return to the gameplay screen."
                 ),
                 (
-                    "You can open the Session screen to review "
-                    "information about your current game, including "
-                    "your business, location, objective, task, "
-                    "and in-game time."
+                    "Select Session to review information about "
+                    "your current game, including your business, "
+                    "location, objective, current task, and "
+                    "in-game time."
                 ),
                 (
                     "As you play, your business will grow and "
@@ -43,5 +43,6 @@ class TutorialScreen(InteractionScreen):
         self.announce_focus()
 
     def complete(self):
-        self.state.session.tutorial_completed = True
+        self.state.gameplay.session.tutorial_completed = True
+        self.state.gameplay.resume()
         self.screens.pop()

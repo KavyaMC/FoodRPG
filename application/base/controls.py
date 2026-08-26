@@ -1,5 +1,6 @@
 import pygame
-from core.keybindings import (
+
+from application.keybindings import (
     ACTIVATE_KEYS,
     BACK_KEYS,
     DOWN,

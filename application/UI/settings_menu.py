@@ -1,9 +1,9 @@
-from core.base.controls import (
+from application.base.controls import (
     Button,
     ComboBox,
 )
-from core.base.screen import ControlScreen
-from core.controllers.settings_controller import (
+from application.base.screen import ControlScreen
+from application.controllers.settings_controller import (
     SettingsController,
 )
 

@@ -1,19 +1,26 @@
-from core.models.gameplay_session import Session
-from core.models.player import Player
-from UI.gameplay_menu import GameplayScreen
+from application.gameplay.session import Session
+from application.player.info import Player
 
 from ..base.controller import Controller
 
 
 class NewGameController(Controller):
     def __init__(self, state, screen):
-        super().__init__(state, screen)
+        super().__init__(
+            state,
+            screen,
+        )
 
     def create_character(self):
-        player = Player(
+        player_defaults = self.state.content.load(
+            "player_defaults.json",
+        )
+
+        player = Player.new(
             player_name=self.screen.player_name.value,
             business_name=self.screen.business_name.value,
-            business_category=(self.screen.business_category.value),
+            business_category=self.screen.business_category.value,
+            defaults=player_defaults,
         )
 
         try:
@@ -28,12 +35,6 @@ class NewGameController(Controller):
             self.speak(notification.title)
             self.speak(notification.message)
             return
-
-        session = Session(
-            player=player,
-        )
-
-        self.state.session = session
 
         slot = getattr(
             self.state,
@@ -51,28 +52,33 @@ class NewGameController(Controller):
             self.speak(notification.message)
             return
 
+        defaults = self.state.content.load(
+            "defaults.json",
+        )
+
+        session = Session.new(
+            player,
+            defaults,
+        )
+
         self.save_load.save(
             slot,
             session.to_dict(),
         )
 
+        self.state.start_gameplay(
+            session,
+        )
+
         notification = self.notify.success(
             "Game Created",
-            (f"Game saved to Slot {slot}. Starting gameplay."),
+            f"Game saved to Slot {slot}. Starting gameplay.",
         )
 
         self.speak(notification.title)
         self.speak(notification.message)
 
-        self.enter_gameplay()
-
-    def enter_gameplay(self):
-        gameplay = GameplayScreen(
-            self.state,
-        )
-
-        self.screens.clear()
-        self.screens.push(gameplay)
+        self.state.gameplay_flow.enter()
 
     def cancel(self):
         self.pop()

@@ -1,6 +1,9 @@
-from core.base.controls import Button
-from core.base.screen import ControlScreen
-from core.controllers.gameplay_controller import GameplayController
+from application import keybindings
+from application.base.controls import Button
+from application.base.screen import ControlScreen
+from application.gameplay.controllers.gameplay_controller import (
+    GameplayController,
+)
 
 
 class GameplayScreen(ControlScreen):
@@ -22,7 +25,17 @@ class GameplayScreen(ControlScreen):
                 self.controller.options,
             ),
             Button(
-                "Status",
+                "Session",
                 self.controller.session,
             ),
         )
+
+    def handle_input(self, event):
+        if event.type != keybindings.KEYDOWN:
+            return
+
+        if event.key in keybindings.BACK_KEYS:
+            self.controller.options()
+            return
+
+        super().handle_input(event)

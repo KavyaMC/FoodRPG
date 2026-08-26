@@ -1,24 +1,15 @@
-from core.base.controls import (
+from application.base.controls import (
     Button,
     ComboBox,
     TextField,
 )
-from core.base.screen import ControlScreen
-from core.controllers.new_game_controller import (
+from application.base.screen import ControlScreen
+from application.controllers.new_game_controller import (
     NewGameController,
 )
 
 
 class NewGameScreen(ControlScreen):
-    BUSINESS_CATEGORIES = (
-        "Cafe",
-        "Bakery",
-        "Family Diner",
-        "Icecream Shack",
-        "Juice Bar",
-        "Food Truck",
-    )
-
     def __init__(self, state):
         super().__init__(
             state,
@@ -29,6 +20,10 @@ class NewGameScreen(ControlScreen):
         self.controller = NewGameController(
             state,
             self,
+        )
+
+        businesses = state.content.load(
+            "businesses.json",
         )
 
         self.player_name = TextField(
@@ -43,7 +38,7 @@ class NewGameScreen(ControlScreen):
 
         self.business_category = ComboBox(
             "Business Category",
-            self.BUSINESS_CATEGORIES,
+            businesses,
         )
 
         self.add_controls(

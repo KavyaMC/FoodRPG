@@ -1,6 +1,12 @@
-from core import keybindings
+from application import keybindings
 
+from .controls import Button
 from .state_object import StateObject
+
+
+class Focus:
+    def __init__(self):
+        self.index = 0
 
 
 class Screen(StateObject):
@@ -9,6 +15,8 @@ class Screen(StateObject):
 
         self.title = title
         self.description = description
+
+        self.focus = Focus()
 
     def identity(self):
         if self.description:
@@ -48,7 +56,6 @@ class ControlScreen(Screen):
         )
 
         self.controls = []
-        self.focus_index = 0
 
     def open(self):
         super().open()
@@ -66,7 +73,7 @@ class ControlScreen(Screen):
         if not self.controls:
             return None
 
-        return self.controls[self.focus_index]
+        return self.controls[self.focus.index]
 
     def add_control(self, control):
         control.announce_callback = self.speak
@@ -81,7 +88,7 @@ class ControlScreen(Screen):
         if not self.controls:
             return
 
-        self.focus_index = (self.focus_index + 1) % len(self.controls)
+        self.focus.index = (self.focus.index + 1) % len(self.controls)
 
         self.announce()
 
@@ -89,7 +96,7 @@ class ControlScreen(Screen):
         if not self.controls:
             return
 
-        self.focus_index = (self.focus_index - 1) % len(self.controls)
+        self.focus.index = (self.focus.index - 1) % len(self.controls)
 
         self.announce()
 
@@ -136,3 +143,61 @@ class ControlScreen(Screen):
             return
 
         super().handle_input(event)
+
+
+class InteractionScreen(ControlScreen):
+    def __init__(
+        self,
+        state,
+        title,
+        description,
+    ):
+        super().__init__(
+            state,
+            title=title,
+            description=title,
+        )
+
+        self.description = description
+        self.description_focus = Focus()
+
+        self.add_controls(
+            Button(
+                "Previous",
+                self.previous,
+            ),
+            Button(
+                "Next",
+                self.next,
+            ),
+        )
+
+    def identity(self):
+        return self.title
+
+    @property
+    def current_description(self):
+        return self.description[self.description_focus.index]
+
+    def open(self):
+        super().open()
+        self.announce_focus()
+
+    def announce_focus(self):
+        self.speak(self.current_description)
+
+    def next(self):
+        if self.description_focus.index >= len(self.description) - 1:
+            self.speak("End of content.")
+            return
+
+        self.description_focus.index += 1
+        self.announce_focus()
+
+    def previous(self):
+        if self.description_focus.index <= 0:
+            self.speak("Beginning of content.")
+            return
+
+        self.description_focus.index -= 1
+        self.announce_focus()

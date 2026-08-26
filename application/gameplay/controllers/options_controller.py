@@ -1,16 +1,19 @@
-from core.controllers.save_slots_controller import (
+from application.controllers.save_slots_controller import (
     SaveSlotMode,
     SaveSlotsController,
 )
-from UI.save_slots_menu import SaveSlotsScreen
-from UI.settings_menu import SettingsScreen
+from application.UI.save_slots_menu import SaveSlotsScreen
+from application.UI.settings_menu import SettingsScreen
 
-from ..base.controller import Controller
+from ...base.controller import Controller
 
 
-class ResumeController(Controller):
+class GameplayOptionsController(Controller):
     def __init__(self, state, screen):
-        super().__init__(state, screen)
+        super().__init__(
+            state,
+            screen,
+        )
 
         self.confirm_return = False
         self.confirm_quit = False
@@ -58,7 +61,6 @@ class ResumeController(Controller):
             return
 
         self.confirm_return = False
-
         self.game.return_to_main_menu()
 
     def quit(self):
@@ -81,5 +83,6 @@ class ResumeController(Controller):
         self.confirm_quit = False
         self.game.quit()
 
-    def back(self):
-        self.pop()
+    def continue_game(self):
+        self.state.gameplay.resume()
+        self.screens.pop()

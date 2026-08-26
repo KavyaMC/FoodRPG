@@ -1,20 +1,21 @@
-from core.controllers.save_slots_controller import (
+from application.controllers.save_slots_controller import (
     SaveSlotMode,
     SaveSlotsController,
 )
-from core.helpers.document_helper import open_document
-from UI.gameplay_menu import GameplayScreen
-from UI.help_menu import HelpScreen
-from UI.new_game_screen import NewGameScreen
-from UI.save_slots_menu import SaveSlotsScreen
-from UI.settings_menu import SettingsScreen
+from application.UI.help_menu import HelpScreen
+from application.UI.new_game_screen import NewGameScreen
+from application.UI.save_slots_menu import SaveSlotsScreen
+from application.UI.settings_menu import SettingsScreen
 
 from ..base.controller import Controller
 
 
 class MainMenuController(Controller):
     def __init__(self, state, screen):
-        super().__init__(state, screen)
+        super().__init__(
+            state,
+            screen,
+        )
 
     def new_game(self):
         controller = SaveSlotsController(
@@ -36,7 +37,7 @@ class MainMenuController(Controller):
     def new_game_slot_selected(self, slot):
         self.state.new_game_slot = slot
 
-        self.pop()
+        self.screens.pop()
 
         self.push(
             NewGameScreen(self.state),
@@ -65,7 +66,7 @@ class MainMenuController(Controller):
         self.push(screen)
 
     def game_loaded(self, session):
-        self.replace(GameplayScreen(self.state))
+        self.state.gameplay_flow.enter()
 
     def settings(self):
         self.push(
@@ -76,9 +77,6 @@ class MainMenuController(Controller):
         self.push(
             HelpScreen(self.state),
         )
-
-    def credits(self):
-        open_document("credits.md")
 
     def quit(self):
         self.game.quit()

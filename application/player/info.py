@@ -4,12 +4,25 @@ from dataclasses import dataclass
 @dataclass(slots=True)
 class Player:
     SAVE_VERSION = 1
+    DEFAULT_OWNERSHIP_MODEL = "Entrepreneur"
 
     player_name: str
     business_name: str
     business_category: str
 
-    ownership_model: str = "Entrepreneur"
+    ownership_model: str = DEFAULT_OWNERSHIP_MODEL
+
+    @classmethod
+    def new(cls, player_name, business_name, business_category, defaults):
+        return cls(
+            player_name=player_name,
+            business_name=business_name,
+            business_category=business_category,
+            ownership_model=defaults.get(
+                "ownership_model",
+                cls.DEFAULT_OWNERSHIP_MODEL,
+            ),
+        )
 
     def validate(self):
         fields = (
@@ -48,7 +61,7 @@ class Player:
             ),
             ownership_model=data.get(
                 "ownership_model",
-                "Entrepreneur",
+                cls.DEFAULT_OWNERSHIP_MODEL,
             ),
         )
 

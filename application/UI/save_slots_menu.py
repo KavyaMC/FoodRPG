@@ -1,5 +1,5 @@
-from core.base.controls import Button
-from core.base.screen import ControlScreen
+from application.base.controls import Button
+from application.base.screen import ControlScreen
 
 
 class SaveSlotsScreen(ControlScreen):

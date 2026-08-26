@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from core.gameplay.mode import GameplayMode
-from core.player.info import Player
+from ..player.info import Player
+from .mode import GameplayMode
 
 
 @dataclass(slots=True)
@@ -34,20 +34,8 @@ class Session:
         return self.player.business_name
 
     @property
-    def business_sector(self):
-        return self.player.business_sector
-
-    @property
     def business_category(self):
         return self.player.business_category
-
-    @property
-    def business_type(self):
-        return self.player.business_type
-
-    @property
-    def business_model(self):
-        return self.player.business_model
 
     @property
     def time(self):
@@ -56,6 +44,33 @@ class Session:
     @property
     def date(self):
         return f"Day {self.day}"
+
+    @classmethod
+    def new(cls, player, defaults):
+        return cls(
+            player=player,
+            day=defaults.get("start_day", 1),
+            hour=defaults.get("start_hour", 6),
+            minute=defaults.get("start_minute", 0),
+            location=defaults.get("location", ""),
+            objective=defaults.get("objective", ""),
+            current_task=defaults.get(
+                "current_task",
+                "",
+            ),
+            current_activity=defaults.get(
+                "current_activity",
+                "",
+            ),
+            tutorial_completed=defaults.get(
+                "tutorial_completed",
+                False,
+            ),
+            play_time_seconds=defaults.get(
+                "play_time_seconds",
+                0,
+            ),
+        )
 
     def to_dict(self):
         return {
@@ -74,8 +89,6 @@ class Session:
 
     @classmethod
     def from_dict(cls, data):
-        # TODO:
-        # Handle save migrations for future save versions.
         return cls(
             player=Player.from_dict(data.get("player", {})),
             day=data.get("day", 1),
@@ -83,10 +96,22 @@ class Session:
             minute=data.get("minute", 0),
             location=data.get("location", ""),
             objective=data.get("objective", ""),
-            current_task=data.get("current_task", ""),
-            current_activity=data.get("current_activity", ""),
-            tutorial_completed=data.get("tutorial_completed", False),
-            play_time_seconds=data.get("play_time_seconds", 0),
+            current_task=data.get(
+                "current_task",
+                "",
+            ),
+            current_activity=data.get(
+                "current_activity",
+                "",
+            ),
+            tutorial_completed=data.get(
+                "tutorial_completed",
+                False,
+            ),
+            play_time_seconds=data.get(
+                "play_time_seconds",
+                0,
+            ),
         )
 
     def __str__(self):

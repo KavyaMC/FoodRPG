@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from enum import Enum
 
-from core.models.gameplay_session import Session
+from application.gameplay.session import Session
 
 from ..base.controller import Controller
 
@@ -13,12 +13,17 @@ class SaveSlotMode(Enum):
 
 class SaveSlotsController(Controller):
     def __init__(self, state, screen, mode):
-        super().__init__(state, screen)
+        super().__init__(
+            state,
+            screen,
+        )
 
         self.mode = mode
         self.pending_overwrite = None
+
         self.on_saved: Callable[[int], None] | None = None
         self.on_loaded: Callable[[Session], None] | None = None
+        self.on_slot_selected: Callable[[int], None] | None = None
 
     @property
     def title(self):
@@ -48,7 +53,26 @@ class SaveSlotsController(Controller):
         return f"Slot {slot}: {session.player.player_name} - {session.player.business_name}"
 
     def save(self, slot):
-        if not self.state.session:
+        if self.on_slot_selected:
+            if self.save_load.exists(slot):
+                if self.pending_overwrite != slot:
+                    self.pending_overwrite = slot
+
+                    notification = self.notify.warning(
+                        "Save Slot Occupied",
+                        (f"Press Enter again to overwrite Slot {slot}. Press Escape to cancel."),
+                    )
+
+                    self.speak(notification.title)
+                    self.speak(notification.message)
+                    return
+
+            self.pending_overwrite = None
+
+            self.on_slot_selected(slot)
+            return
+
+        if not self.state.gameplay:
             notification = self.notify.error(
                 "Save Failed",
                 "There is no active game session to save.",
@@ -75,7 +99,7 @@ class SaveSlotsController(Controller):
 
         self.save_load.save(
             slot,
-            self.state.session.to_dict(),
+            self.state.gameplay.session.to_dict(),
         )
 
         notification = self.notify.success(
@@ -117,11 +141,11 @@ class SaveSlotsController(Controller):
 
         session = Session.from_dict(data)
 
-        self.state.session = session
+        self.state.start_gameplay(session)
 
         notification = self.notify.success(
             "Game Loaded",
-            (f"Welcome back {session.player.player_name}."),
+            f"Welcome back {session.player.player_name}.",
         )
 
         self.speak(notification.title)

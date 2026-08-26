@@ -1,16 +1,27 @@
-from core.base.controller import Controller
-from UI.resume_screen import ResumeScreen
-from UI.status_menu import SessionScreen
+from application.base.controller import Controller
+from application.gameplay.UI.options import OptionsScreen
+from application.gameplay.UI.status_screen import StatusScreen
 
 
 class GameplayController(Controller):
     def __init__(self, state, screen):
-        super().__init__(state, screen)
+        super().__init__(
+            state,
+            screen,
+        )
 
     def options(self):
+        self.state.gameplay.pause()
+
         self.push(
-            ResumeScreen(self.state),
+            OptionsScreen(
+                self.state,
+            ),
         )
 
     def session(self):
-        self.push(SessionScreen(self.state))
+        self.push(
+            StatusScreen(
+                self.state,
+            ),
+        )

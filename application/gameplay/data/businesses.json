@@ -1,4 +1,4 @@
-BUSINESSES = [
+[
     "Dairy Farm",
     "Poultry Farm",
     "Fishery",
@@ -16,5 +16,5 @@ BUSINESSES = [
     "Quick Service Restaurant",
     "Juice Bar",
     "Club",
-    "Ice Cream Shack",
+    "Ice Cream Shack"
 ]

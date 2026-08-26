@@ -4,13 +4,23 @@ from pathlib import Path
 
 def app_directory():
     path = Path(os.environ["LOCALAPPDATA"]) / "FoodRPG"
-    path.mkdir(parents=True, exist_ok=True)
+
+    path.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     return path
 
 
 def slots_directory():
     path = app_directory() / "slots"
-    path.mkdir(parents=True, exist_ok=True)
+
+    path.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     return path
 
 
@@ -23,7 +33,11 @@ def docs_directory():
 
 
 def help_directory():
-    return docs_directory() / "helpfiles"
+    return docs_directory() / "player"
+
+
+def gameplay_data_directory():
+    return root_directory() / "application" / "gameplay" / "data"
 
 
 def settings_file():

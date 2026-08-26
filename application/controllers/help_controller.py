@@ -1,5 +1,5 @@
-from core.base.controller import Controller
-from core.helpers.document_helper import open_document
+from application.base.controller import Controller
+from application.helpers.document_helper import open_document
 
 
 class HelpController(Controller):
@@ -17,6 +17,9 @@ class HelpController(Controller):
 
     def installation(self):
         open_document("installation.md")
+
+    def credits(self):
+        open_document("credits")
 
     def about(self):
         open_document("about.md")

@@ -1,5 +1,6 @@
 import pygame
-from UI.main_menu import MainMenuScreen
+
+from application.UI.main_menu import MainMenuScreen
 
 from .gamestate import GameState
 
