@@ -15,10 +15,18 @@ class Control:
     def __init__(self, label, announce=None):
         self.label = label
         self.announce_callback = announce
+        self.verbosity_callback = None
 
     @property
     def capturing_input(self):
         return False
+
+    @property
+    def verbosity(self):
+        if self.verbosity_callback:
+            return self.verbosity_callback()
+
+        return "NORMAL"
 
     def announce(self):
         return self.label

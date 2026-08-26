@@ -4,6 +4,13 @@ from .paths import settings_file
 
 
 class Settings:
+    DEFAULTS = {
+        "speech": {
+            "backend": "AUTO",
+            "verbosity": "NORMAL",
+        },
+    }
+
     def __init__(self):
         self.path = settings_file()
         self.config = ConfigParser()
@@ -15,28 +22,34 @@ class Settings:
         self.save()
 
     def _create_defaults(self):
-        if not self.config.has_section("speech"):
-            self.config.add_section("speech")
+        for section, options in self.DEFAULTS.items():
+            if not self.config.has_section(section):
+                self.config.add_section(section)
 
-        if not self.config.has_option(
-            "speech",
-            "backend",
-        ):
-            self.config.set(
-                "speech",
-                "backend",
-                "AUTO",
-            )
+            for option, value in options.items():
+                if not self.config.has_option(
+                    section,
+                    option,
+                ):
+                    self.config.set(
+                        section,
+                        option,
+                        value,
+                    )
 
-        if not self.config.has_option(
-            "speech",
-            "verbosity",
-        ):
-            self.config.set(
-                "speech",
-                "verbosity",
-                "Normal",
-            )
+    def reset_to_defaults(self):
+        for section, options in self.DEFAULTS.items():
+            if not self.config.has_section(section):
+                self.config.add_section(section)
+
+            for option, value in options.items():
+                self.config.set(
+                    section,
+                    option,
+                    value,
+                )
+
+        self.save()
 
     def load(self):
         if self.path.exists():

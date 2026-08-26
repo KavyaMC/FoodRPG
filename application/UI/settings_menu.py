@@ -58,7 +58,7 @@ class SettingsScreen(ControlScreen):
             on_changed=(self.controller.backend_changed),
         )
 
-        self.verbosity = ComboBox(
+        self.verbosity_control = ComboBox(
             "Speech Verbosity",
             self.VERBOSITY_LEVELS,
             index=self.VERBOSITY_LEVELS.index(current_verbosity),
@@ -67,7 +67,7 @@ class SettingsScreen(ControlScreen):
 
         self.add_controls(
             self.speech_backend,
-            self.verbosity,
+            self.verbosity_control,
             Button(
                 "Back",
                 self.controller.back,

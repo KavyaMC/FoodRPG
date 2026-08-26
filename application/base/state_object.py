@@ -32,3 +32,10 @@ class StateObject:
 
     def speak(self, text, interrupt=False):
         self.speech.speak(text, interrupt)
+
+    @property
+    def verbosity(self):
+        return self.state.speech.verbosity
+
+    def set_verbosity(self, verbosity):
+        self.speech.set_verbosity(verbosity)

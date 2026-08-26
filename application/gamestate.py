@@ -24,18 +24,18 @@ class GameState:
         backend = self.settings.get(
             "speech",
             "backend",
-            "AUTO",
+            Speech.DEFAULT_BACKEND,
         )
 
-        enabled = self.settings.getboolean(
+        verbosity = self.settings.get(
             "speech",
-            "enabled",
-            True,
+            "verbosity",
+            Speech.DEFAULT_VERBOSITY,
         )
 
         self.speech = Speech(
             mode=backend,
-            enabled=enabled,
+            verbosity=verbosity,
         )
 
         self.screen_manager = ScreenManager()

@@ -20,14 +20,17 @@ class GameplayScreen(ControlScreen):
         )
 
         self.add_controls(
-            Button(
-                "Options",
-                self.controller.options,
-            ),
+            Button("Business Info", self.controller.business),
             Button(
                 "Session",
                 self.controller.session,
             ),
+            Button(
+                "Options",
+                self.controller.options,
+            ),
+            Button("Notifications", self.controller.notifications),
+            Button("Achievements", self.controller.achievements),
         )
 
     def handle_input(self, event):

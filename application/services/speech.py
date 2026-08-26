@@ -12,8 +12,23 @@ class Speech:
         "Speech Dispatcher": "Speech Dispatcher",
     }
 
-    def __init__(self, mode="AUTO", enabled=True):
+    VERBOSITY_LEVELS = (
+        "LOW",
+        "NORMAL",
+        "HIGH",
+    )
+
+    DEFAULT_BACKEND = "AUTO"
+    DEFAULT_VERBOSITY = "NORMAL"
+
+    def __init__(
+        self,
+        mode=DEFAULT_BACKEND,
+        verbosity=DEFAULT_VERBOSITY,
+        enabled=True,
+    ):
         self.mode = mode
+        self.verbosity = verbosity
         self.enabled = enabled
 
         self.ctx = Context()
@@ -28,7 +43,10 @@ class Speech:
                     return backend_id
 
         except Exception as e:
-            print("Speech backend lookup error:", e)
+            print(
+                "Speech backend lookup error:",
+                e,
+            )
 
         return None
 
@@ -43,7 +61,10 @@ class Speech:
             return self.ctx.create_best()
 
         except Exception as e:
-            print("Speech engine creation error:", e)
+            print(
+                "Speech engine creation error:",
+                e,
+            )
 
         try:
             sapi_id = self._find_backend_id("SAPI")
@@ -52,7 +73,10 @@ class Speech:
                 return self.ctx.create(sapi_id)
 
         except Exception as e:
-            print("Speech SAPI fallback error:", e)
+            print(
+                "Speech SAPI fallback error:",
+                e,
+            )
 
         return self.ctx.create_best()
 
@@ -68,13 +92,22 @@ class Speech:
                     backends.append(name)
 
         except Exception as e:
-            print("Speech backend list error:", e)
+            print(
+                "Speech backend list error:",
+                e,
+            )
 
         return backends
 
     def set_mode(self, mode):
         self.mode = mode
         self.engine = self._create_engine(mode)
+
+    def set_verbosity(self, verbosity):
+        if verbosity not in self.VERBOSITY_LEVELS:
+            raise ValueError(f"Invalid verbosity: {verbosity}")
+
+        self.verbosity = verbosity
 
     def set_enabled(self, enabled):
         self.enabled = enabled
@@ -87,7 +120,12 @@ class Speech:
         except Exception:
             return None
 
-    def speak(self, text, interrupt=False, on_complete=None):
+    def speak(
+        self,
+        text,
+        interrupt=False,
+        on_complete=None,
+    ):
         if not self.enabled:
             if on_complete:
                 on_complete()
@@ -107,11 +145,17 @@ class Speech:
                 sapi_id = self._find_backend_id("SAPI")
 
                 if sapi_id is not None:
-                    fallback = self.ctx.create(sapi_id)
+                    fallback = self.ctx.create(
+                        sapi_id,
+                    )
+
                     fallback.output(text)
 
                     if on_complete:
                         on_complete()
 
             except Exception as e:
-                print("Speech fallback error:", e)
+                print(
+                    "Speech fallback error:",
+                    e,
+                )

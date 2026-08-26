@@ -1,3 +1,4 @@
+from .activity import Activity
 from .clock import GameClock
 from .mode import GameplayMode
 
@@ -7,6 +8,7 @@ class GameplayState:
         self.session = session
         self.clock = GameClock(session)
         self.mode = GameplayMode.LOADING
+        self.area = None
 
     def start(self):
         self.mode = GameplayMode.PLAYING
@@ -22,3 +24,6 @@ class GameplayState:
 
     def start_interaction(self):
         self.mode = GameplayMode.INTERACTION
+
+    def perform(self, activity: Activity):
+        self.clock.advance(activity.duration)

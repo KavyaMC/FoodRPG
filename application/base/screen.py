@@ -77,11 +77,13 @@ class ControlScreen(Screen):
 
     def add_control(self, control):
         control.announce_callback = self.speak
+        control.verbosity_callback = lambda: self.verbosity
         self.controls.append(control)
 
     def add_controls(self, *controls):
         for control in controls:
             control.announce_callback = self.speak
+            control.verbosity_callback = lambda: self.verbosity
             self.controls.append(control)
 
     def move_next(self):

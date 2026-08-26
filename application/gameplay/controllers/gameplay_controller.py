@@ -10,6 +10,10 @@ class GameplayController(Controller):
             screen,
         )
 
+    @property
+    def area(self):
+        return self.gameplay.area
+
     def options(self):
         self.state.gameplay.pause()
 
@@ -25,3 +29,12 @@ class GameplayController(Controller):
                 self.state,
             ),
         )
+
+    def notifications(self):
+        self.speak("Not implemented yet. Work in progress. system coming soon")
+
+    def achievements(self):
+        self.speak("Not implemented yet. Work in progress. system coming soon")
+
+    def business(self):
+        self.speak("Not implemented yet. Work in progress. system coming soon")
