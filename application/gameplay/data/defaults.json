@@ -1,0 +1,11 @@
+{
+    "start_day": 1,
+    "start_hour": 6,
+    "start_minute": 0,
+    "location": "",
+    "objective": "",
+    "current_task": "",
+    "current_activity": "",
+    "tutorial_completed": false,
+    "play_time_seconds": 0
+}
