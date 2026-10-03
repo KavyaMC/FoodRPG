@@ -1,0 +1,18 @@
+{
+    "tutorial": {
+        "title": "Gameplay Tutorial",
+        "description": "Learn the basics of Food RPG.",
+        "pages": [
+            "Welcome to Food RPG. In this game, you build and manage your own food business.",
+            "Your business is the heart of your game. You will make decisions, manage resources, complete activities, and grow your business over time.",
+            "Use the Up and Down arrow keys to move between menu options. Use Enter or Space to activate the selected option.",
+            "Some controls, such as combo boxes, use the Left and Right arrow keys to change their values. When a combo box is opened, use Up and Down to select an option and Enter or Space to confirm it.",
+            "You can open your game details to view information about your current day, time, location, objective, and activity.",
+            "The Options menu contains game settings such as speech backend, speech verbosity, speech volume, and speech rate.",
+            "You can pause the game while viewing the gameplay options. Choose Continue to return to the game.",
+            "Your business options depend on the type of business you selected when creating your game.",
+            "Food RPG is designed to be played through menus, speech, and keyboard controls. Take your time and explore the options available to you.",
+            "Tutorial complete. Your game is ready to begin."
+        ]
+    }
+}

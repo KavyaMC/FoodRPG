@@ -81,12 +81,11 @@ class MainMenuController(Controller):
         controller.open()
 
     def notifications(self):
-        # NotificationsController goes here.
+        self.speak("Coming soon.")
         pass
 
     def achievements(self):
-        # AchievementsController goes here.
-        pass
+        self.speak("Coming soon.")
 
     def quit(self):
         self.game.quit()

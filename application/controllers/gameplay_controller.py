@@ -18,13 +18,13 @@ class GameplayController(Controller):
 
         data = self.get_menu("gameplay_menu")
 
-        business_category = self.session.player.business_category
+        business_type = self.gameplay.session.player.business_type
 
         business_options = data.get(
             "business_options",
             {},
         ).get(
-            business_category,
+            business_type,
             [],
         )
 
@@ -53,7 +53,7 @@ class GameplayController(Controller):
         self.open_menu("gameplay")
         self.push(self.screen)
 
-        if not self.session.tutorial_completed:
+        if not self.gameplay.session.tutorial_completed:
             self.gameplay.start_tutorial()
 
             controller = TutorialController(
@@ -65,7 +65,12 @@ class GameplayController(Controller):
 
         self.gameplay.start()
 
-    def session(self):
+    def kitchen(self):
+        self.speak(
+            "Kitchen is not implemented yet.",
+        )
+
+    def details(self):
         controller = SessionController(
             self.state,
         )

@@ -1,20 +1,22 @@
 from ..base.controller import Controller
+from ..controllers.gameplay_controller import GameplayController
 from ..gameplay.session import Session
 from ..models.player import Player
 
 
 class NewGameController(Controller):
-    MENU_FILE = "data/forms.json"
+    MENU_FILE = "forms.json"
 
     def __init__(self, state):
         super().__init__(state)
 
         self.player_name = None
         self.business_name = None
-        self.business_category = None
+        self.business_type = None
 
     def open(self):
         form = self.get_menu("new_game")
+
         self.load_menu(form)
         self.push(self.screen)
 
@@ -31,8 +33,8 @@ class NewGameController(Controller):
         return control
 
     def create_combo(self, item):
-        if item["label"] == "Business Category":
-            businesses = self.state.content.load(
+        if item["label"] == "Business Type":
+            businesses = self.data_loader.load(
                 "businesses.json",
             )
 
@@ -41,20 +43,20 @@ class NewGameController(Controller):
 
         control = super().create_combo(item)
 
-        if item["label"] == "Business Category":
-            self.business_category = control
+        if item["label"] == "Business Type":
+            self.business_type = control
 
         return control
 
-    def create_character(self):
-        player_defaults = self.state.content.load(
+    def create_game(self):
+        player_defaults = self.data_loader.load(
             "player_defaults.json",
         )
 
         player = Player.new(
             player_name=self.player_name.value,
             business_name=self.business_name.value,
-            business_category=self.business_category.value,
+            business_type=self.business_type.value,
             defaults=player_defaults,
         )
 
@@ -87,7 +89,7 @@ class NewGameController(Controller):
             self.speak(notification.message)
             return
 
-        defaults = self.state.content.load(
+        defaults = self.data_loader.load(
             "defaults.json",
         )
 
@@ -113,7 +115,11 @@ class NewGameController(Controller):
         self.speak(notification.title)
         self.speak(notification.message)
 
-        self.state.gameplay_flow.enter()
+        controller = GameplayController(
+            self.state,
+        )
+
+        controller.open()
 
     def cancel(self):
         self.pop()

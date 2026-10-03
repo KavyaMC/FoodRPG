@@ -1,0 +1,41 @@
+{
+    "new_game": {
+        "title": "New Game",
+        "description": "Create your player and choose your business.",
+        "items": [
+            {
+                "label": "Player Name",
+                "control": "text",
+                "name": "player_name",
+                "value": "",
+                "placeholder": "Enter your name",
+                "max_length": 32
+            },
+            {
+                "label": "Business Name",
+                "control": "text",
+                "name": "business_name",
+                "value": "",
+                "placeholder": "Enter your business name",
+                "max_length": 64
+            },
+            {
+                "label": "Business Type",
+                "control": "combo",
+                "name": "business_category",
+                "options": [],
+                "value": ""
+            },
+            {
+                "label": "Create Game",
+                "control": "button",
+                "action": "create_game"
+            },
+            {
+                "label": "Back",
+                "control": "button",
+                "action": "back"
+            }
+        ]
+    }
+}

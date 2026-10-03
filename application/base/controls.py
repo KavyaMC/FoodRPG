@@ -182,6 +182,89 @@ class ComboBox(Control):
         self.speak(self.options[self.highlight])
 
 
+class Slider(Control):
+    def __init__(
+        self,
+        label,
+        value=0,
+        minimum=0,
+        maximum=100,
+        step=1,
+        on_changed=None,
+        announce=None,
+    ):
+        super().__init__(label, announce)
+
+        if minimum > maximum:
+            raise ValueError(
+                "Slider minimum cannot be greater than maximum.",
+            )
+
+        if step <= 0:
+            raise ValueError(
+                "Slider step must be greater than zero.",
+            )
+
+        self.minimum = minimum
+        self.maximum = maximum
+        self.step = step
+        self.on_changed = on_changed
+
+        self.value = self._normalize(value)
+
+    def _normalize(self, value):
+        value = float(value)
+
+        value = min(
+            max(
+                value,
+                self.minimum,
+            ),
+            self.maximum,
+        )
+
+        return round(
+            value,
+            2,
+        )
+
+    def _set_value(self, value):
+        value = self._normalize(value)
+
+        if value == self.value:
+            self.announce_self()
+            return
+
+        self.value = value
+
+        if self.on_changed:
+            self.on_changed(self.value)
+
+        self.announce_self()
+
+    def set_value(self, value):
+        self.value = self._normalize(value)
+        self.announce_self()
+
+    def announce(self):
+        value = f"{self.value:.2f}".rstrip("0").rstrip(".")
+
+        return f"{self.label}. {value}"
+
+    def previous(self):
+        self._set_value(
+            self.value - self.step,
+        )
+
+    def next(self):
+        self._set_value(
+            self.value + self.step,
+        )
+
+    def activate(self):
+        self.announce_self()
+
+
 class TextField(Control):
     def __init__(
         self,
@@ -193,6 +276,7 @@ class TextField(Control):
         announce=None,
     ):
         super().__init__(label, announce)
+
         self.value = value
         self.placeholder = placeholder
         self.max_length = max_length
@@ -240,8 +324,15 @@ class TextField(Control):
             self.cursor = len(self.value)
             self.editing = True
 
-            self.speak(f"Editing {self.label}.")
-            self.speak(self.value if self.value else self.placeholder)
+            self.speak(
+                f"Editing {self.label}.",
+            )
+
+            if self.value:
+                self.speak(self.value)
+            else:
+                self.speak("Blank.")
+
             return
 
         self.editing = False
@@ -251,9 +342,22 @@ class TextField(Control):
 
         self.announce_self()
 
+    def cancel(self):
+        if not self.editing:
+            return
+
+        self.value = self.original_value
+        self.cursor = len(self.value)
+        self.editing = False
+
+        self.speak("Editing cancelled.")
+        self.announce_self()
+
     def insert(self, character):
         if len(self.value) >= self.max_length:
-            self.speak("Maximum length reached.")
+            self.speak(
+                "Maximum length reached.",
+            )
             return
 
         self.value = self.value[: self.cursor] + character + self.value[self.cursor :]
@@ -267,7 +371,9 @@ class TextField(Control):
 
     def backspace(self):
         if self.cursor == 0:
-            self.speak("Beginning of text.")
+            self.speak(
+                "Beginning of text.",
+            )
             return
 
         deleted = self.value[self.cursor - 1]
@@ -277,13 +383,19 @@ class TextField(Control):
         self.cursor -= 1
 
         if deleted == " ":
-            self.speak("Deleted space.")
+            self.speak(
+                "Space deleted.",
+            )
         else:
-            self.speak(f"Deleted {deleted}.")
+            self.speak(
+                f"Character {deleted} deleted.",
+            )
 
     def delete(self):
         if self.cursor >= len(self.value):
-            self.speak("End of text.")
+            self.speak(
+                "End of text.",
+            )
             return
 
         deleted = self.value[self.cursor]
@@ -291,9 +403,13 @@ class TextField(Control):
         self.value = self.value[: self.cursor] + self.value[self.cursor + 1 :]
 
         if deleted == " ":
-            self.speak("Deleted space.")
+            self.speak(
+                "Space deleted.",
+            )
         else:
-            self.speak(f"Deleted {deleted}.")
+            self.speak(
+                f"Character {deleted} deleted.",
+            )
 
     def previous(self):
         if self.cursor > 0:
@@ -305,6 +421,14 @@ class TextField(Control):
         if self.cursor < len(self.value):
             self.cursor += 1
 
+        self.announce_cursor()
+
+    def home(self):
+        self.cursor = 0
+        self.announce_cursor()
+
+    def end(self):
+        self.cursor = len(self.value)
         self.announce_cursor()
 
 

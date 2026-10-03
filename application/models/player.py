@@ -8,16 +8,16 @@ class Player:
 
     player_name: str
     business_name: str
-    business_category: str
+    business_type: str
 
     ownership_model: str = DEFAULT_OWNERSHIP_MODEL
 
     @classmethod
-    def new(cls, player_name, business_name, business_category, defaults):
+    def new(cls, player_name, business_name, business_type, defaults):
         return cls(
             player_name=player_name,
             business_name=business_name,
-            business_category=business_category,
+            business_type=business_type,
             ownership_model=defaults.get(
                 "ownership_model",
                 cls.DEFAULT_OWNERSHIP_MODEL,
@@ -28,7 +28,7 @@ class Player:
         fields = (
             ("Player Name", self.player_name),
             ("Business Name", self.business_name),
-            ("Business Category", self.business_category),
+            ("Business Type", self.business_type),
         )
 
         for name, value in fields:
@@ -40,7 +40,7 @@ class Player:
             "version": self.SAVE_VERSION,
             "player_name": self.player_name,
             "business_name": self.business_name,
-            "business_category": self.business_category,
+            "business_type": self.business_type,
             "ownership_model": self.ownership_model,
         }
 
@@ -55,8 +55,8 @@ class Player:
                 "business_name",
                 "",
             ),
-            business_category=data.get(
-                "business_category",
+            business_type=data.get(
+                "business_type",
                 "",
             ),
             ownership_model=data.get(
@@ -66,4 +66,4 @@ class Player:
         )
 
     def __str__(self):
-        return f"{self.player_name} | {self.business_name} | {self.business_category}"
+        return f"{self.player_name} | {self.business_name} | {self.business_type}"

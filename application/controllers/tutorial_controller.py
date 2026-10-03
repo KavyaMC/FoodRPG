@@ -4,7 +4,7 @@ from ..helpers.DataLoader import DataLoader
 
 
 class TutorialController(Controller):
-    TUTORIAL_FILE = "data/tutorial.json"
+    TUTORIAL_FILE = "tutorial.json"
 
     def __init__(self, state):
         super().__init__(state)

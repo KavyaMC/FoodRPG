@@ -31,8 +31,8 @@ class Session:
         return self.player.business_name
 
     @property
-    def business_category(self):
-        return self.player.business_category
+    def business_type(self):
+        return self.player.business_type
 
     @property
     def time(self):

@@ -48,6 +48,44 @@ class Screen(StateObject):
             return
 
         action = self.keybindings.get_action(event)
+        control = self.current_control
+
+        if control and control.capturing_input:
+            match action:
+                case "LEFT":
+                    control.previous()
+
+                case "RIGHT":
+                    control.next()
+
+                case "HOME":
+                    if hasattr(control, "home"):
+                        control.home()
+
+                case "END":
+                    if hasattr(control, "end"):
+                        control.end()
+
+                case "ACTIVATE":
+                    control.activate()
+
+                case "BACK":
+                    if hasattr(control, "cancel"):
+                        control.cancel()
+
+                case "BACKSPACE":
+                    if hasattr(control, "backspace"):
+                        control.backspace()
+
+                case "DELETE":
+                    if hasattr(control, "delete"):
+                        control.delete()
+
+                case "TEXT":
+                    if hasattr(control, "insert"):
+                        control.insert(event.unicode)
+
+            return
 
         match action:
             case "UP":
@@ -57,12 +95,12 @@ class Screen(StateObject):
                 self.next_control()
 
             case "LEFT":
-                if self.current_control:
-                    self.current_control.previous()
+                if control:
+                    control.previous()
 
             case "RIGHT":
-                if self.current_control:
-                    self.current_control.next()
+                if control:
+                    control.next()
 
             case "ACTIVATE":
                 self.activate_current()

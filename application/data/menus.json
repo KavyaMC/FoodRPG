@@ -52,19 +52,41 @@
                     "NVDA",
                     "JAWS",
                     "OneCore",
-                    "SAPI"
+                    "SAPI",
+                    "Orca",
+                    "Speech Dispatcher"
                 ],
+                "value": "AUTO",
                 "on_changed": "backend_changed"
             },
             {
                 "label": "Speech Verbosity",
                 "control": "combo",
                 "options": [
-                    "Low",
-                    "Normal",
-                    "High"
+                    "LOW",
+                    "NORMAL",
+                    "HIGH"
                 ],
+                "value": "NORMAL",
                 "on_changed": "verbosity_changed"
+            },
+            {
+                "label": "Speech Volume",
+                "control": "slider",
+                "value": 1.0,
+                "minimum": 0.0,
+                "maximum": 1.0,
+                "step": 0.05,
+                "on_changed": "volume_changed"
+            },
+            {
+                "label": "Speech Rate",
+                "control": "slider",
+                "value": 0.5,
+                "minimum": 0.25,
+                "maximum": 2.0,
+                "step": 0.05,
+                "on_changed": "rate_changed"
             },
             {
                 "label": "Reset Defaults",
@@ -80,13 +102,43 @@
     },
     "help_menu": {
         "title": "Help",
-        "description": "Learn more about the game.",
+        "description": "Learn more about Food RPG.",
         "items": [
             {
                 "label": "Introduction",
                 "control": "button",
                 "action": "open_document",
                 "file": "introduction.md"
+            },
+            {
+                "label": "Getting Started",
+                "control": "button",
+                "action": "open_document",
+                "file": "getting_started.md"
+            },
+            {
+                "label": "Keyboard Shortcuts",
+                "control": "button",
+                "action": "open_document",
+                "file": "keyboard_shortcuts.md"
+            },
+            {
+                "label": "Accessibility",
+                "control": "button",
+                "action": "open_document",
+                "file": "accessibility.md"
+            },
+            {
+                "label": "Installation",
+                "control": "button",
+                "action": "open_document",
+                "file": "installation.md"
+            },
+            {
+                "label": "Credits",
+                "control": "button",
+                "action": "open_document",
+                "file": "credits.md"
             },
             {
                 "label": "About",
@@ -98,6 +150,31 @@
                 "label": "Back",
                 "control": "button",
                 "action": "back"
+            }
+        ]
+    },
+    "gameplay_menu": {
+        "title": "Gameplay",
+        "description": "Choose what you want to do.",
+        "business_options": {
+            "Cafe": [
+                {
+                    "label": "Kitchen",
+                    "control": "button",
+                    "action": "kitchen"
+                }
+            ]
+        },
+        "generic_options": [
+            {
+                "label": "Business",
+                "control": "button",
+                "action": "session"
+            },
+            {
+                "label": "Options",
+                "control": "button",
+                "action": "options"
             }
         ]
     }

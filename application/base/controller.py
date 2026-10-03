@@ -2,6 +2,7 @@ from ..helpers.DataLoader import DataLoader
 from .controls import (
     Button,
     ComboBox,
+    Slider,
     TextArea,
     TextField,
     Toggle,
@@ -91,6 +92,9 @@ class Controller(StateObject):
             case "combo":
                 return self.create_combo(item)
 
+            case "slider":
+                return self.create_slider(item)
+
             case "text":
                 return self.create_text_field(item)
 
@@ -168,6 +172,36 @@ class Controller(StateObject):
             index=item.get(
                 "index",
                 0,
+            ),
+            on_changed=callback,
+        )
+
+    def create_slider(self, item):
+        callback = None
+
+        if item.get("on_changed"):
+            callback = getattr(
+                self,
+                item["on_changed"],
+            )
+
+        return Slider(
+            item["label"],
+            value=item.get(
+                "value",
+                0,
+            ),
+            minimum=item.get(
+                "minimum",
+                0,
+            ),
+            maximum=item.get(
+                "maximum",
+                100,
+            ),
+            step=item.get(
+                "step",
+                1,
             ),
             on_changed=callback,
         )
