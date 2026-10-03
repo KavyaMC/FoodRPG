@@ -2,8 +2,13 @@ from ..base.controller import Controller
 
 
 class SettingsController(Controller):
-    def __init__(self, state, screen):
-        super().__init__(state, screen)
+    def __init__(self, state):
+        super().__init__(state)
+
+    def open(self):
+        menu = self.get_menu("settings_menu")
+        self.load_menu(menu)
+        self.push(self.screen)
 
     def backend_changed(self, backend):
         self.speech.set_mode(backend)
@@ -18,7 +23,7 @@ class SettingsController(Controller):
 
         notification = self.notify.success(
             "Speech Backend Updated",
-            (f"Speech backend changed to {backend}."),
+            f"Speech backend changed to {backend}.",
         )
 
         self.speak(notification.title)

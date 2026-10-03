@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 
-from ..player.info import Player
-from .mode import GameplayMode
+from ..models.player import Player
 
 
 @dataclass(slots=True)
@@ -9,8 +8,6 @@ class Session:
     SAVE_VERSION = 1
 
     player: Player
-
-    mode: GameplayMode = GameplayMode.LOADING
 
     day: int = 1
     hour: int = 6

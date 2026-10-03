@@ -1,16 +1,3 @@
-import pygame
-
-from application.keybindings import (
-    ACTIVATE_KEYS,
-    BACK_KEYS,
-    DOWN,
-    KEYDOWN,
-    LEFT,
-    RIGHT,
-    UP,
-)
-
-
 class Control:
     def __init__(self, label, announce=None):
         self.label = label
@@ -25,7 +12,6 @@ class Control:
     def verbosity(self):
         if self.verbosity_callback:
             return self.verbosity_callback()
-
         return "NORMAL"
 
     def announce(self):
@@ -41,20 +27,16 @@ class Control:
     def activate(self):
         pass
 
-    def left(self):
+    def previous(self):
         pass
 
-    def right(self):
-        pass
-
-    def handle_input(self, event):
+    def next(self):
         pass
 
 
 class Button(Control):
     def __init__(self, label, action, announce=None):
         super().__init__(label, announce)
-
         self.action = action
 
     def activate(self):
@@ -70,13 +52,11 @@ class Toggle(Control):
         announce=None,
     ):
         super().__init__(label, announce)
-
         self.value = value
         self.on_changed = on_changed
 
     def announce(self):
         state = "On" if self.value else "Off"
-
         return f"{self.label}. {state}"
 
     def toggle(self):
@@ -101,21 +81,16 @@ class ComboBox(Control):
         announce=None,
     ):
         super().__init__(label, announce)
-
         self.options = list(options)
+        self.on_changed = on_changed
 
         if self.options:
-            self.index = min(
-                max(index, 0),
-                len(self.options) - 1,
-            )
+            self.index = min(max(index, 0), len(self.options) - 1)
         else:
             self.index = 0
 
         self.highlight = self.index
         self.expanded = False
-
-        self.on_changed = on_changed
 
     @property
     def capturing_input(self):
@@ -128,9 +103,23 @@ class ComboBox(Control):
 
         return self.options[self.index]
 
+    def announce(self):
+        if not self.options:
+            return self.label
+
+        if self.expanded:
+            return (
+                f"{self.label}. "
+                f"Selecting. "
+                f"{self.options[self.highlight]}. "
+                f"{self.highlight + 1} of "
+                f"{len(self.options)}."
+            )
+
+        return f"{self.label}. {self.value}"
+
     def set_options(self, options):
         self.options = list(options)
-
         self.index = 0
         self.highlight = 0
         self.expanded = False
@@ -153,21 +142,6 @@ class ComboBox(Control):
 
         self.announce_self()
 
-    def announce(self):
-        if not self.options:
-            return self.label
-
-        if self.expanded:
-            return (
-                f"{self.label}. "
-                f"Selecting. "
-                f"{self.options[self.highlight]}. "
-                f"{self.highlight + 1} of "
-                f"{len(self.options)}."
-            )
-
-        return f"{self.label}. {self.value}"
-
     def activate(self):
         if not self.options:
             self.announce_self()
@@ -176,7 +150,6 @@ class ComboBox(Control):
         if not self.expanded:
             self.expanded = True
             self.highlight = self.index
-
             self.announce_self()
             return
 
@@ -188,33 +161,20 @@ class ComboBox(Control):
 
         self.announce_self()
 
-    def handle_input(self, event):
-        if event.type != KEYDOWN:
+    def previous(self):
+        if not self.expanded:
             return
 
-        if event.key in UP:
-            self._move_highlight(-1)
+        self._move_highlight(-1)
+
+    def next(self):
+        if not self.expanded:
             return
 
-        if event.key in DOWN:
-            self._move_highlight(1)
-            return
-
-        if event.key in ACTIVATE_KEYS:
-            self.activate()
-            return
-
-        if event.key in BACK_KEYS:
-            if self.expanded:
-                self.expanded = False
-                self.highlight = self.index
-                self.announce_self()
+        self._move_highlight(1)
 
     def _move_highlight(self, direction):
         if not self.options:
-            return
-
-        if not self.expanded:
             return
 
         self.highlight = (self.highlight + direction) % len(self.options)
@@ -233,11 +193,9 @@ class TextField(Control):
         announce=None,
     ):
         super().__init__(label, announce)
-
         self.value = value
         self.placeholder = placeholder
         self.max_length = max_length
-
         self.on_changed = on_changed
 
         self.cursor = len(value)
@@ -283,9 +241,7 @@ class TextField(Control):
             self.editing = True
 
             self.speak(f"Editing {self.label}.")
-
             self.speak(self.value if self.value else self.placeholder)
-
             return
 
         self.editing = False
@@ -339,83 +295,59 @@ class TextField(Control):
         else:
             self.speak(f"Deleted {deleted}.")
 
-    def left(self):
+    def previous(self):
         if self.cursor > 0:
             self.cursor -= 1
 
         self.announce_cursor()
 
-    def right(self):
+    def next(self):
         if self.cursor < len(self.value):
             self.cursor += 1
 
         self.announce_cursor()
 
-    def handle_input(self, event):
-        if event.type != KEYDOWN:
-            return
 
-        # Text editing gets first priority.
-        if event.key == pygame.K_BACKSPACE:
-            self.backspace()
-            return
+class TextArea(Control):
+    def __init__(self, text, announce=None):
+        super().__init__("", announce)
 
-        if event.key == pygame.K_DELETE:
-            self.delete()
-            return
+        if isinstance(text, str):
+            self.text = [text]
+        else:
+            self.text = list(text)
 
-        if event.key in LEFT:
-            self.left()
-            return
-
-        if event.key in RIGHT:
-            self.right()
-            return
-
-        # Space must be inserted while editing.
-        if event.key == pygame.K_SPACE:
-            self.insert(" ")
-            return
-
-        # Enter confirms the edit.
-        if event.key in (
-            pygame.K_RETURN,
-            pygame.K_KP_ENTER,
-        ):
-            self.activate()
-            return
-
-        # Escape cancels the edit.
-        if event.key == pygame.K_ESCAPE:
-            self.value = self.original_value
-            self.cursor = len(self.value)
-            self.editing = False
-
-            self.speak("Changes discarded.")
-
-            self.announce_self()
-            return
-
-        if event.unicode and event.unicode.isprintable():
-            self.insert(event.unicode)
-
-
-class LabelField(Control):
-    def __init__(
-        self,
-        label,
-        value="",
-        announce=None,
-    ):
-        super().__init__(label, announce)
-
-        self.value = value
+        self.index = 0
 
     def announce(self):
-        return f"{self.label}. {self.value}"
+        if not self.text:
+            return ""
 
-    def set_value(self, value):
-        self.value = value
+        return self.text[self.index]
+
+    def previous(self):
+        if not self.text:
+            return False
+
+        if self.index <= 0:
+            self.speak("Beginning of content.")
+            return False
+
+        self.index -= 1
+        self.announce_self()
+        return True
+
+    def next(self):
+        if not self.text:
+            return False
+
+        if self.index >= len(self.text) - 1:
+            self.speak("End of content.")
+            return False
+
+        self.index += 1
+        self.announce_self()
+        return True
 
     def activate(self):
         self.announce_self()

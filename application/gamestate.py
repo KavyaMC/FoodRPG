@@ -1,6 +1,6 @@
-from .gameplay.flow import Flow
 from .gameplay.state import GameplayState
 from .services.content_loader import ContentLoader
+from .services.keybindings import KeyBindings
 from .services.notifications import NotificationService
 from .services.save_load import SaveLoad
 from .services.screen_manager import ScreenManager
@@ -15,9 +15,9 @@ class GameState:
         self.gameplay = None
 
         self._init_services()
-        self.gameplay_flow = Flow(self)
 
     def _init_services(self):
+        self.keybindings = KeyBindings()
         self.settings = Settings()
         self.content = ContentLoader()
 

@@ -1,6 +1,3 @@
-from application import keybindings
-
-from .controls import Button
 from .state_object import StateObject
 
 
@@ -17,6 +14,15 @@ class Screen(StateObject):
         self.description = description
 
         self.focus = Focus()
+        self.controls = []
+        self.controller = None
+
+    @property
+    def current_control(self):
+        if not self.controls:
+            return None
+
+        return self.controls[self.focus.index]
 
     def identity(self):
         if self.description:
@@ -26,9 +32,10 @@ class Screen(StateObject):
 
     def open(self):
         self.speak(self.identity())
+        self.announce()
 
     def resume(self):
-        pass
+        self.announce()
 
     def update(self, dt):
         pass
@@ -37,56 +44,52 @@ class Screen(StateObject):
         pass
 
     def handle_input(self, event):
-        if event.type != keybindings.KEYDOWN:
+        if not self.keybindings.is_keydown(event):
             return
 
-        if event.key in keybindings.BACK_KEYS:
-            if self.screens.count > 1:
-                self.screens.pop()
-            else:
-                self.game.quit()
+        action = self.keybindings.get_action(event)
 
+        match action:
+            case "UP":
+                self.previous_control()
 
-class ControlScreen(Screen):
-    def __init__(self, state, title="", description=""):
-        super().__init__(
-            state,
-            title,
-            description,
-        )
+            case "DOWN":
+                self.next_control()
 
-        self.controls = []
+            case "LEFT":
+                if self.current_control:
+                    self.current_control.previous()
 
-    def open(self):
-        super().open()
-        self.announce()
+            case "RIGHT":
+                if self.current_control:
+                    self.current_control.next()
 
-    def resume(self):
-        self.announce()
+            case "ACTIVATE":
+                self.activate_current()
+
+            case "BACK":
+                if self.controller:
+                    self.controller.back()
 
     def announce(self):
         if self.current_control:
             self.current_control.announce_self()
 
-    @property
-    def current_control(self):
-        if not self.controls:
-            return None
-
-        return self.controls[self.focus.index]
-
     def add_control(self, control):
         control.announce_callback = self.speak
         control.verbosity_callback = lambda: self.verbosity
+
         self.controls.append(control)
 
     def add_controls(self, *controls):
         for control in controls:
-            control.announce_callback = self.speak
-            control.verbosity_callback = lambda: self.verbosity
-            self.controls.append(control)
+            self.add_control(control)
 
-    def move_next(self):
+    def clear_controls(self):
+        self.controls.clear()
+        self.focus.index = 0
+
+    def next_control(self):
         if not self.controls:
             return
 
@@ -94,7 +97,7 @@ class ControlScreen(Screen):
 
         self.announce()
 
-    def move_previous(self):
+    def previous_control(self):
         if not self.controls:
             return
 
@@ -103,103 +106,11 @@ class ControlScreen(Screen):
         self.announce()
 
     def activate_current(self):
-        if not self.current_control:
-            return None
+        if self.current_control:
+            self.current_control.activate()
 
-        return self.current_control.activate()
-
-    def handle_input(self, event):
-        if event.type != keybindings.KEYDOWN:
-            return
-
-        if self.current_control and getattr(
-            self.current_control,
-            "capturing_input",
-            False,
-        ):
-            self.current_control.handle_input(event)
-            return
-
-        if event.key in keybindings.UP:
-            self.move_previous()
-            return
-
-        if event.key in keybindings.DOWN:
-            self.move_next()
-            return
-
-        if event.key in keybindings.LEFT:
-            if self.current_control:
-                self.current_control.left()
-
-            return
-
-        if event.key in keybindings.RIGHT:
-            if self.current_control:
-                self.current_control.right()
-
-            return
-
-        if event.key in keybindings.ACTIVATE_KEYS:
-            self.activate_current()
-            return
-
-        super().handle_input(event)
-
-
-class InteractionScreen(ControlScreen):
-    def __init__(
-        self,
-        state,
-        title,
-        description,
-    ):
-        super().__init__(
-            state,
-            title=title,
-            description=title,
-        )
-
-        self.description = description
-        self.description_focus = Focus()
-
-        self.add_controls(
-            Button(
-                "Previous",
-                self.previous,
-            ),
-            Button(
-                "Next",
-                self.next,
-            ),
-        )
-
-    def identity(self):
-        return self.title
-
-    @property
-    def current_description(self):
-        return self.description[self.description_focus.index]
-
-    def open(self):
-        super().open()
-        self.announce_focus()
-
-    def announce_focus(self):
-        self.speak(self.current_description)
-
-    def next(self):
-        if self.description_focus.index >= len(self.description) - 1:
-            self.speak("End of content.")
-            return
-
-        self.description_focus.index += 1
-        self.announce_focus()
-
-    def previous(self):
-        if self.description_focus.index <= 0:
-            self.speak("Beginning of content.")
-            return
-
-        self.description_focus.index -= 1
-        self.announce_focus()
+    def go_back(self):
+        if self.screens.count > 1:
+            self.screens.pop()
+        else:
+            self.game.quit()

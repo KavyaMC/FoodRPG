@@ -1,15 +1,50 @@
-from application.gameplay.session import Session
-from application.player.info import Player
-
 from ..base.controller import Controller
+from ..gameplay.session import Session
+from ..models.player import Player
 
 
 class NewGameController(Controller):
-    def __init__(self, state, screen):
-        super().__init__(
-            state,
-            screen,
-        )
+    MENU_FILE = "data/forms.json"
+
+    def __init__(self, state):
+        super().__init__(state)
+
+        self.player_name = None
+        self.business_name = None
+        self.business_category = None
+
+    def open(self):
+        form = self.get_menu("new_game")
+        self.load_menu(form)
+        self.push(self.screen)
+
+    def create_text_field(self, item):
+        control = super().create_text_field(item)
+
+        match item["label"]:
+            case "Player Name":
+                self.player_name = control
+
+            case "Business Name":
+                self.business_name = control
+
+        return control
+
+    def create_combo(self, item):
+        if item["label"] == "Business Category":
+            businesses = self.state.content.load(
+                "businesses.json",
+            )
+
+            item = item.copy()
+            item["options"] = businesses
+
+        control = super().create_combo(item)
+
+        if item["label"] == "Business Category":
+            self.business_category = control
+
+        return control
 
     def create_character(self):
         player_defaults = self.state.content.load(
@@ -17,9 +52,9 @@ class NewGameController(Controller):
         )
 
         player = Player.new(
-            player_name=self.screen.player_name.value,
-            business_name=self.screen.business_name.value,
-            business_category=self.screen.business_category.value,
+            player_name=self.player_name.value,
+            business_name=self.business_name.value,
+            business_category=self.business_category.value,
             defaults=player_defaults,
         )
 

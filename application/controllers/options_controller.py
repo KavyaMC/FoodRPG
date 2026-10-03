@@ -1,47 +1,38 @@
-from application.controllers.save_slots_controller import (
+from ..base.controller import Controller
+from .save_slots_controller import (
     SaveSlotMode,
     SaveSlotsController,
 )
-from application.UI.save_slots_menu import SaveSlotsScreen
-from application.UI.settings_menu import SettingsScreen
-
-from ...base.controller import Controller
+from .settings_controller import SettingsController
 
 
-class GameplayOptionsController(Controller):
-    def __init__(self, state, screen):
-        super().__init__(
-            state,
-            screen,
-        )
+class OptionsController(Controller):
+    def __init__(self, state):
+        super().__init__(state)
 
         self.confirm_return = False
         self.confirm_quit = False
 
+    def open(self):
+        menu = self.get_menu("options")
+        self.load_menu(menu)
+        self.push(self.screen)
+
     def save(self):
         controller = SaveSlotsController(
             self.state,
-            None,
             SaveSlotMode.SAVE,
         )
 
-        screen = SaveSlotsScreen(
-            self.state,
-            controller,
-        )
-
-        controller.screen = screen
         controller.on_saved = self.save_completed
-
-        self.push(screen)
+        controller.open()
 
     def save_completed(self, slot):
         self.screens.pop()
 
     def settings(self):
-        self.push(
-            SettingsScreen(self.state),
-        )
+        controller = SettingsController(self.state)
+        controller.open()
 
     def return_to_menu(self):
         if not self.confirm_return:

@@ -1,0 +1,104 @@
+{
+    "main_menu": {
+        "title": "Main Menu",
+        "description": "Welcome to Food RPG! Choose new game to begin.",
+        "items": [
+            {
+                "label": "New Game",
+                "control": "button",
+                "action": "new_game"
+            },
+            {
+                "label": "Load Game",
+                "control": "button",
+                "action": "load_game"
+            },
+            {
+                "label": "Settings",
+                "control": "button",
+                "action": "settings"
+            },
+            {
+                "label": "Help",
+                "control": "button",
+                "action": "help"
+            },
+            {
+                "label": "Notifications",
+                "control": "button",
+                "action": "notifications"
+            },
+            {
+                "label": "Achievements",
+                "control": "button",
+                "action": "achievements"
+            },
+            {
+                "label": "Quit",
+                "control": "button",
+                "action": "quit"
+            }
+        ]
+    },
+    "settings_menu": {
+        "title": "Settings",
+        "description": "Configure game settings.",
+        "items": [
+            {
+                "label": "Speech Backend",
+                "control": "combo",
+                "options": [
+                    "AUTO",
+                    "NVDA",
+                    "JAWS",
+                    "OneCore",
+                    "SAPI"
+                ],
+                "on_changed": "backend_changed"
+            },
+            {
+                "label": "Speech Verbosity",
+                "control": "combo",
+                "options": [
+                    "Low",
+                    "Normal",
+                    "High"
+                ],
+                "on_changed": "verbosity_changed"
+            },
+            {
+                "label": "Reset Defaults",
+                "control": "button",
+                "action": "reset_settings"
+            },
+            {
+                "label": "Back",
+                "control": "button",
+                "action": "back"
+            }
+        ]
+    },
+    "help_menu": {
+        "title": "Help",
+        "description": "Learn more about the game.",
+        "items": [
+            {
+                "label": "Introduction",
+                "control": "button",
+                "action": "open_document",
+                "file": "introduction.md"
+            },
+            {
+                "label": "About",
+                "control": "button",
+                "action": "open_document",
+                "file": "about.md"
+            },
+            {
+                "label": "Back",
+                "control": "button",
+                "action": "back"
+            }
+        ]
+    }
+}

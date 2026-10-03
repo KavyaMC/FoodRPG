@@ -1,82 +1,92 @@
-from application.controllers.save_slots_controller import (
+from ..base.controller import Controller
+from .gameplay_controller import (
+    GameplayController,
+)
+from .help_controller import (
+    HelpController,
+)
+from .new_game_controller import (
+    NewGameController,
+)
+from .save_slots_controller import (
     SaveSlotMode,
     SaveSlotsController,
 )
-from application.UI.help_menu import HelpScreen
-from application.UI.new_game_screen import NewGameScreen
-from application.UI.save_slots_menu import SaveSlotsScreen
-from application.UI.settings_menu import SettingsScreen
-
-from ..base.controller import Controller
+from .settings_controller import (
+    SettingsController,
+)
 
 
 class MainMenuController(Controller):
-    def __init__(self, state, screen):
-        super().__init__(
-            state,
-            screen,
-        )
+    def __init__(self, state):
+        super().__init__(state)
+
+    def open(self):
+        menu = self.get_menu("main_menu")
+
+        self.load_menu(menu)
+
+        self.push(self.screen)
 
     def new_game(self):
         controller = SaveSlotsController(
             self.state,
-            None,
             SaveSlotMode.SAVE,
         )
 
-        screen = SaveSlotsScreen(
-            self.state,
-            controller,
-        )
-
-        controller.screen = screen
         controller.on_slot_selected = self.new_game_slot_selected
 
-        self.push(screen)
+        controller.open()
 
     def new_game_slot_selected(self, slot):
         self.state.new_game_slot = slot
 
         self.screens.pop()
 
-        self.push(
-            NewGameScreen(self.state),
+        controller = NewGameController(
+            self.state,
         )
 
-    def continue_game(self):
-        self.replace(
-            NewGameScreen(self.state),
-        )
+        controller.open()
 
     def load_game(self):
         controller = SaveSlotsController(
             self.state,
-            None,
             SaveSlotMode.LOAD,
         )
 
-        screen = SaveSlotsScreen(
-            self.state,
-            controller,
-        )
-
-        controller.screen = screen
         controller.on_loaded = self.game_loaded
 
-        self.push(screen)
+        controller.open()
 
     def game_loaded(self, session):
-        self.state.gameplay_flow.enter()
+        controller = GameplayController(
+            self.state,
+        )
+
+        controller.open()
 
     def settings(self):
-        self.push(
-            SettingsScreen(self.state),
+        controller = SettingsController(
+            self.state,
         )
 
+        controller.open()
+
     def help(self):
-        self.push(
-            HelpScreen(self.state),
+        controller = HelpController(
+            self.state,
         )
+
+        controller.open()
+
+    def notifications(self):
+        # NotificationsController goes here.
+        pass
+
+    def achievements(self):
+        # AchievementsController goes here.
+        pass
 
     def quit(self):
         self.game.quit()

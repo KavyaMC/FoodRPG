@@ -23,10 +23,6 @@ class StateObject:
         return self.state.notifications
 
     @property
-    def session(self):
-        return self.state.session
-
-    @property
     def speech(self):
         return self.state.speech
 
@@ -39,3 +35,15 @@ class StateObject:
 
     def set_verbosity(self, verbosity):
         self.speech.set_verbosity(verbosity)
+
+    @property
+    def keybindings(self):
+        return self.state.keybindings
+
+    @property
+    def gameplay(self):
+        return self.state.gameplay
+
+    @property
+    def session(self):
+        return self.gameplay.session

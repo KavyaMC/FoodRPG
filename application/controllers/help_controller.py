@@ -1,28 +1,32 @@
-from application.base.controller import Controller
-from application.helpers.document_helper import open_document
+import os
+
+from application.base.controls import Button
+from application.services.paths import help_directory
+
+from ..base.controller import Controller
 
 
 class HelpController(Controller):
-    def introduction(self):
-        open_document("introduction.md")
+    def __init__(self, state):
+        super().__init__(state)
 
-    def getting_started(self):
-        open_document("getting_started.md")
+    def open(self):
+        menu = self.get_menu("help_menu")
+        self.load_menu(menu)
+        self.push(self.screen)
 
-    def keyboard_shortcuts(self):
-        open_document("keyboard_shortcuts.md")
+    def create_button(self, item):
+        if item.get("action") == "open_document":
+            filename = item["file"]
+            return Button(
+                item["label"],
+                lambda: self.open_document(filename),
+            )
 
-    def accessibility(self):
-        open_document("accessibility.md")
+        return super().create_button(item)
 
-    def installation(self):
-        open_document("installation.md")
-
-    def credits(self):
-        open_document("credits")
-
-    def about(self):
-        open_document("about.md")
+    def open_document(self, filename):
+        os.startfile(help_directory() / filename)
 
     def back(self):
         self.pop()
