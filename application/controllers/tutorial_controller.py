@@ -14,17 +14,28 @@ class TutorialController(Controller):
 
     def open(self):
         data_loader = DataLoader()
-        data = data_loader.load(self.TUTORIAL_FILE)
+
+        data = data_loader.load(
+            self.TUTORIAL_FILE,
+        )
 
         tutorial = data["tutorial"]
 
-        self.screen.title = tutorial.get("title", "Gameplay Tutorial")
+        self.screen.title = tutorial.get(
+            "title",
+            "Gameplay Tutorial",
+        )
+
         self.screen.description = tutorial.get(
             "description",
             "Learn the basics of gameplay.",
         )
 
-        self.pages = tutorial.get("pages", [])
+        self.pages = tutorial.get(
+            "pages",
+            [],
+        )
+
         self.page = 0
 
         self.build_page()
@@ -34,11 +45,16 @@ class TutorialController(Controller):
         self.screen.clear_controls()
 
         self.screen.add_control(
-            TextArea(self.pages[self.page]),
+            TextArea(
+                self.pages[self.page],
+            ),
         )
 
         self.screen.add_control(
-            Button("Next", self.next),
+            Button(
+                "Next",
+                self.next,
+            ),
         )
 
     def next(self):
@@ -52,5 +68,8 @@ class TutorialController(Controller):
 
     def complete(self):
         self.gameplay.session.tutorial_completed = True
-        self.gameplay.resume()
-        self.screens.pop()
+
+        self.state.save_game()
+
+        self.gameplay.start()
+        self.pop()

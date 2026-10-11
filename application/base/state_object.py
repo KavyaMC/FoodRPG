@@ -47,3 +47,7 @@ class StateObject:
     @property
     def session(self):
         return self.gameplay.session
+
+    @property
+    def items(self):
+        return self.state.items

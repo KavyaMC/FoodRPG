@@ -169,12 +169,48 @@
             {
                 "label": "Business",
                 "control": "button",
-                "action": "session"
+                "action": "details"
             },
             {
                 "label": "Options",
                 "control": "button",
                 "action": "options"
+            }
+        ]
+    },
+    "options": {
+        "title": "Options",
+        "description": "Choose an option.",
+        "items": [
+            {
+                "label": "Continue",
+                "control": "button",
+                "action": "continue_game"
+            },
+            {
+                "label": "Settings",
+                "control": "button",
+                "action": "settings"
+            },
+            {
+                "label": "Help",
+                "control": "button",
+                "action": "help"
+            },
+            {
+                "label": "Notifications",
+                "control": "button",
+                "action": "notifications"
+            },
+            {
+                "label": "Achievements",
+                "control": "button",
+                "action": "achievements"
+            },
+            {
+                "label": "Quit",
+                "control": "button",
+                "action": "quit"
             }
         ]
     }

@@ -91,6 +91,7 @@ class SaveSlotsController(Controller):
                     return
 
             self.pending_overwrite = None
+            self.state.current_save_slot = slot
             self.on_slot_selected(slot)
             return
 
@@ -120,6 +121,7 @@ class SaveSlotsController(Controller):
                 return
 
         self.pending_overwrite = None
+        self.state.current_save_slot = slot
 
         self.save_load.save(
             slot,
@@ -167,6 +169,7 @@ class SaveSlotsController(Controller):
 
         session = Session.from_dict(data)
 
+        self.state.current_save_slot = slot
         self.state.start_gameplay(session)
 
         notification = self.notify.success(

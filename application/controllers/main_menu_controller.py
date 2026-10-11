@@ -1,20 +1,9 @@
 from ..base.controller import Controller
-from .gameplay_controller import (
-    GameplayController,
-)
-from .help_controller import (
-    HelpController,
-)
-from .new_game_controller import (
-    NewGameController,
-)
-from .save_slots_controller import (
-    SaveSlotMode,
-    SaveSlotsController,
-)
-from .settings_controller import (
-    SettingsController,
-)
+from .gameplay_controller import GameplayController
+from .help_controller import HelpController
+from .new_game_controller import NewGameController
+from .save_slots_controller import SaveSlotMode, SaveSlotsController
+from .settings_controller import SettingsController
 
 
 class MainMenuController(Controller):
@@ -25,7 +14,6 @@ class MainMenuController(Controller):
         menu = self.get_menu("main_menu")
 
         self.load_menu(menu)
-
         self.push(self.screen)
 
     def new_game(self):
@@ -39,7 +27,7 @@ class MainMenuController(Controller):
         controller.open()
 
     def new_game_slot_selected(self, slot):
-        self.state.new_game_slot = slot
+        self.state.current_save_slot = slot
 
         self.screens.pop()
 
@@ -56,10 +44,15 @@ class MainMenuController(Controller):
         )
 
         controller.on_loaded = self.game_loaded
-
         controller.open()
 
     def game_loaded(self, session):
+        self.state.current_save_slot = self.state.current_save_slot
+
+        self.state.start_gameplay(
+            session,
+        )
+
         controller = GameplayController(
             self.state,
         )
@@ -81,11 +74,10 @@ class MainMenuController(Controller):
         controller.open()
 
     def notifications(self):
-        self.speak("Coming soon.")
-        pass
+        self.speak("Notifications not implemented yet.")
 
     def achievements(self):
-        self.speak("Coming soon.")
+        self.speak("Achievements not implemented yet.")
 
     def quit(self):
         self.game.quit()

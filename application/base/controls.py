@@ -12,7 +12,16 @@ class Control:
     def verbosity(self):
         if self.verbosity_callback:
             return self.verbosity_callback()
+
         return "NORMAL"
+
+    @property
+    def control_type(self):
+        return None
+
+    @property
+    def instruction(self):
+        return None
 
     def announce(self):
         return self.label
@@ -22,7 +31,12 @@ class Control:
             self.announce_callback(text)
 
     def announce_self(self):
-        self.speak(self.announce())
+        if self.announce_callback:
+            self.announce_callback(
+                self.announce(),
+                self.control_type,
+                self.instruction,
+            )
 
     def activate(self):
         pass
@@ -39,6 +53,14 @@ class Button(Control):
         super().__init__(label, announce)
         self.action = action
 
+    @property
+    def control_type(self):
+        return "button"
+
+    @property
+    def instruction(self):
+        return "Press enter or space to activate"
+
     def activate(self):
         return self.action()
 
@@ -54,6 +76,14 @@ class Toggle(Control):
         super().__init__(label, announce)
         self.value = value
         self.on_changed = on_changed
+
+    @property
+    def control_type(self):
+        return "toggle"
+
+    @property
+    def instruction(self):
+        return "Press enter or space to toggle"
 
     def announce(self):
         state = "On" if self.value else "Off"
@@ -91,6 +121,17 @@ class ComboBox(Control):
 
         self.highlight = self.index
         self.expanded = False
+
+    @property
+    def control_type(self):
+        return "combo box"
+
+    @property
+    def instruction(self):
+        if self.expanded:
+            return "Use up and down arrows to select"
+
+        return "Press enter or space to open"
 
     @property
     def capturing_input(self):
@@ -212,6 +253,14 @@ class Slider(Control):
 
         self.value = self._normalize(value)
 
+    @property
+    def control_type(self):
+        return "slider"
+
+    @property
+    def instruction(self):
+        return "Use left and right arrows to adjust"
+
     def _normalize(self, value):
         value = float(value)
 
@@ -285,6 +334,17 @@ class TextField(Control):
         self.cursor = len(value)
         self.editing = False
         self.original_value = value
+
+    @property
+    def control_type(self):
+        return "text field"
+
+    @property
+    def instruction(self):
+        if self.editing:
+            return None
+
+        return "Press enter or space to edit"
 
     @property
     def capturing_input(self):
@@ -434,7 +494,8 @@ class TextField(Control):
 
 class TextArea(Control):
     def __init__(self, text, announce=None):
-        super().__init__("", announce)
+        super().__init__(text, announce)
+        self.text = text
 
         if isinstance(text, str):
             self.text = [text]

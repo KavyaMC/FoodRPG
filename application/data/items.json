@@ -1,0 +1,32 @@
+{
+  "items": [
+    {
+      "item_id": 1,
+      "item_name": "Egg",
+      "item_type": "Food",
+      "attributes": {},
+      "tags": []
+    },
+    {
+      "item_id": 2,
+      "item_name": "Milk",
+      "item_type": "Food",
+      "attributes": {},
+      "tags": []
+    },
+    {
+      "item_id": 3,
+      "item_name": "Tea",
+      "item_type": "Beverage",
+      "attributes": {},
+      "tags": []
+    },
+    {
+      "item_id": 4,
+      "item_name": "Single Burner Stove",
+      "item_type": "Equipment",
+      "attributes": {},
+      "tags": []
+    }
+  ]
+}

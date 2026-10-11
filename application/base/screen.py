@@ -114,9 +114,8 @@ class Screen(StateObject):
             self.current_control.announce_self()
 
     def add_control(self, control):
-        control.announce_callback = self.speak
+        control.announce_callback = self.speech.announce
         control.verbosity_callback = lambda: self.verbosity
-
         self.controls.append(control)
 
     def add_controls(self, *controls):

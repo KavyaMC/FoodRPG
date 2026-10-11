@@ -1,7 +1,7 @@
 from ..base.controller import Controller
-from ..controllers.gameplay_controller import GameplayController
 from ..gameplay.session import Session
 from ..models.player import Player
+from .gameplay_controller import GameplayController
 
 
 class NewGameController(Controller):
@@ -73,11 +73,7 @@ class NewGameController(Controller):
             self.speak(notification.message)
             return
 
-        slot = getattr(
-            self.state,
-            "new_game_slot",
-            None,
-        )
+        slot = self.state.current_save_slot
 
         if slot is None:
             notification = self.notify.error(
@@ -98,14 +94,11 @@ class NewGameController(Controller):
             defaults,
         )
 
-        self.save_load.save(
-            slot,
-            session.to_dict(),
-        )
-
         self.state.start_gameplay(
             session,
         )
+
+        self.state.save_game()
 
         notification = self.notify.success(
             "Game Created",
