@@ -1,6 +1,8 @@
 import pygame
 
-from application.UI.main_menu import MainMenuScreen
+from application.controllers.main_menu_controller import (
+    MainMenuController,
+)
 
 from .gamestate import GameState
 
@@ -11,14 +13,21 @@ class Game:
 
         self._init_window()
         self._init_state()
-        self.state.screen_manager.push(MainMenuScreen(self.state))
+
+        controller = MainMenuController(self.state)
+        controller.open()
 
     def _init_window(self):
         self.name = "Food RPG"
-        self.version = "v0.1.0"
+        self.version = "v0.2.0"
 
-        self.screen = pygame.display.set_mode((800, 600))
-        pygame.display.set_caption(f"{self.name} {self.version}")
+        self.screen = pygame.display.set_mode(
+            (800, 600),
+        )
+
+        pygame.display.set_caption(
+            f"{self.name} {self.version}",
+        )
 
         self.clock = pygame.time.Clock()
 
@@ -27,9 +36,10 @@ class Game:
 
     def run(self):
         while self.state.running:
-            self.clock.tick(30)
+            self.clock.tick(60)
             self.handle_events()
             pygame.display.flip()
+
         pygame.quit()
 
     def handle_events(self):
@@ -37,13 +47,14 @@ class Game:
             if event.type == pygame.QUIT:
                 self.quit()
                 return
+
             self.state.screen_manager.dispatch(event)
 
     def return_to_main_menu(self):
         self.state.screen_manager.clear()
-        self.state.screen_manager.push(
-            MainMenuScreen(self.state),
-        )
+
+        controller = MainMenuController(self.state)
+        controller.open()
 
     def quit(self):
         self.state.running = False

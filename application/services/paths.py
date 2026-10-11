@@ -28,6 +28,10 @@ def root_directory():
     return Path(__file__).resolve().parents[2]
 
 
+def data_directory():
+    return root_directory() / "application" / "data"
+
+
 def docs_directory():
     return root_directory() / "docs"
 

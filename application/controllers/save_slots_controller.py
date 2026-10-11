@@ -1,6 +1,7 @@
 from collections.abc import Callable
 from enum import Enum
 
+from application.base.controls import Button
 from application.gameplay.session import Session
 
 from ..base.controller import Controller
@@ -12,11 +13,10 @@ class SaveSlotMode(Enum):
 
 
 class SaveSlotsController(Controller):
-    def __init__(self, state, screen, mode):
-        super().__init__(
-            state,
-            screen,
-        )
+    SLOT_COUNT = 4
+
+    def __init__(self, state, mode):
+        super().__init__(state)
 
         self.mode = mode
         self.pending_overwrite = None
@@ -31,6 +31,28 @@ class SaveSlotsController(Controller):
             return "Choose Save Slot"
 
         return "Load Game"
+
+    def open(self):
+        self.screen.title = self.title
+        self.screen.description = "Choose a save slot."
+
+        self.build_slots()
+
+        self.push(self.screen)
+
+    def build_slots(self):
+        self.screen.clear_controls()
+
+        for slot in range(
+            1,
+            self.SLOT_COUNT + 1,
+        ):
+            self.screen.add_control(
+                Button(
+                    self.slot_label(slot),
+                    lambda s=slot: self.slot_selected(s),
+                )
+            )
 
     def slot_selected(self, slot):
         if self.mode == SaveSlotMode.SAVE:
@@ -65,10 +87,11 @@ class SaveSlotsController(Controller):
 
                     self.speak(notification.title)
                     self.speak(notification.message)
+
                     return
 
             self.pending_overwrite = None
-
+            self.state.current_save_slot = slot
             self.on_slot_selected(slot)
             return
 
@@ -80,6 +103,7 @@ class SaveSlotsController(Controller):
 
             self.speak(notification.title)
             self.speak(notification.message)
+
             return
 
         if self.save_load.exists(slot):
@@ -93,9 +117,11 @@ class SaveSlotsController(Controller):
 
                 self.speak(notification.title)
                 self.speak(notification.message)
+
                 return
 
         self.pending_overwrite = None
+        self.state.current_save_slot = slot
 
         self.save_load.save(
             slot,
@@ -125,6 +151,7 @@ class SaveSlotsController(Controller):
 
             self.speak(notification.title)
             self.speak(notification.message)
+
             return
 
         data = self.save_load.load(slot)
@@ -137,10 +164,12 @@ class SaveSlotsController(Controller):
 
             self.speak(notification.title)
             self.speak(notification.message)
+
             return
 
         session = Session.from_dict(data)
 
+        self.state.current_save_slot = slot
         self.state.start_gameplay(session)
 
         notification = self.notify.success(

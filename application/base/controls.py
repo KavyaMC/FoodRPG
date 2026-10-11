@@ -1,16 +1,3 @@
-import pygame
-
-from application.keybindings import (
-    ACTIVATE_KEYS,
-    BACK_KEYS,
-    DOWN,
-    KEYDOWN,
-    LEFT,
-    RIGHT,
-    UP,
-)
-
-
 class Control:
     def __init__(self, label, announce=None):
         self.label = label
@@ -28,6 +15,14 @@ class Control:
 
         return "NORMAL"
 
+    @property
+    def control_type(self):
+        return None
+
+    @property
+    def instruction(self):
+        return None
+
     def announce(self):
         return self.label
 
@@ -36,26 +31,35 @@ class Control:
             self.announce_callback(text)
 
     def announce_self(self):
-        self.speak(self.announce())
+        if self.announce_callback:
+            self.announce_callback(
+                self.announce(),
+                self.control_type,
+                self.instruction,
+            )
 
     def activate(self):
         pass
 
-    def left(self):
+    def previous(self):
         pass
 
-    def right(self):
-        pass
-
-    def handle_input(self, event):
+    def next(self):
         pass
 
 
 class Button(Control):
     def __init__(self, label, action, announce=None):
         super().__init__(label, announce)
-
         self.action = action
+
+    @property
+    def control_type(self):
+        return "button"
+
+    @property
+    def instruction(self):
+        return "Press enter or space to activate"
 
     def activate(self):
         return self.action()
@@ -70,13 +74,19 @@ class Toggle(Control):
         announce=None,
     ):
         super().__init__(label, announce)
-
         self.value = value
         self.on_changed = on_changed
 
+    @property
+    def control_type(self):
+        return "toggle"
+
+    @property
+    def instruction(self):
+        return "Press enter or space to toggle"
+
     def announce(self):
         state = "On" if self.value else "Off"
-
         return f"{self.label}. {state}"
 
     def toggle(self):
@@ -101,21 +111,27 @@ class ComboBox(Control):
         announce=None,
     ):
         super().__init__(label, announce)
-
         self.options = list(options)
+        self.on_changed = on_changed
 
         if self.options:
-            self.index = min(
-                max(index, 0),
-                len(self.options) - 1,
-            )
+            self.index = min(max(index, 0), len(self.options) - 1)
         else:
             self.index = 0
 
         self.highlight = self.index
         self.expanded = False
 
-        self.on_changed = on_changed
+    @property
+    def control_type(self):
+        return "combo box"
+
+    @property
+    def instruction(self):
+        if self.expanded:
+            return "Use up and down arrows to select"
+
+        return "Press enter or space to open"
 
     @property
     def capturing_input(self):
@@ -128,9 +144,23 @@ class ComboBox(Control):
 
         return self.options[self.index]
 
+    def announce(self):
+        if not self.options:
+            return self.label
+
+        if self.expanded:
+            return (
+                f"{self.label}. "
+                f"Selecting. "
+                f"{self.options[self.highlight]}. "
+                f"{self.highlight + 1} of "
+                f"{len(self.options)}."
+            )
+
+        return f"{self.label}. {self.value}"
+
     def set_options(self, options):
         self.options = list(options)
-
         self.index = 0
         self.highlight = 0
         self.expanded = False
@@ -153,21 +183,6 @@ class ComboBox(Control):
 
         self.announce_self()
 
-    def announce(self):
-        if not self.options:
-            return self.label
-
-        if self.expanded:
-            return (
-                f"{self.label}. "
-                f"Selecting. "
-                f"{self.options[self.highlight]}. "
-                f"{self.highlight + 1} of "
-                f"{len(self.options)}."
-            )
-
-        return f"{self.label}. {self.value}"
-
     def activate(self):
         if not self.options:
             self.announce_self()
@@ -176,7 +191,6 @@ class ComboBox(Control):
         if not self.expanded:
             self.expanded = True
             self.highlight = self.index
-
             self.announce_self()
             return
 
@@ -188,38 +202,116 @@ class ComboBox(Control):
 
         self.announce_self()
 
-    def handle_input(self, event):
-        if event.type != KEYDOWN:
+    def previous(self):
+        if not self.expanded:
             return
 
-        if event.key in UP:
-            self._move_highlight(-1)
+        self._move_highlight(-1)
+
+    def next(self):
+        if not self.expanded:
             return
 
-        if event.key in DOWN:
-            self._move_highlight(1)
-            return
-
-        if event.key in ACTIVATE_KEYS:
-            self.activate()
-            return
-
-        if event.key in BACK_KEYS:
-            if self.expanded:
-                self.expanded = False
-                self.highlight = self.index
-                self.announce_self()
+        self._move_highlight(1)
 
     def _move_highlight(self, direction):
         if not self.options:
             return
 
-        if not self.expanded:
-            return
-
         self.highlight = (self.highlight + direction) % len(self.options)
 
         self.speak(self.options[self.highlight])
+
+
+class Slider(Control):
+    def __init__(
+        self,
+        label,
+        value=0,
+        minimum=0,
+        maximum=100,
+        step=1,
+        on_changed=None,
+        announce=None,
+    ):
+        super().__init__(label, announce)
+
+        if minimum > maximum:
+            raise ValueError(
+                "Slider minimum cannot be greater than maximum.",
+            )
+
+        if step <= 0:
+            raise ValueError(
+                "Slider step must be greater than zero.",
+            )
+
+        self.minimum = minimum
+        self.maximum = maximum
+        self.step = step
+        self.on_changed = on_changed
+
+        self.value = self._normalize(value)
+
+    @property
+    def control_type(self):
+        return "slider"
+
+    @property
+    def instruction(self):
+        return "Use left and right arrows to adjust"
+
+    def _normalize(self, value):
+        value = float(value)
+
+        value = min(
+            max(
+                value,
+                self.minimum,
+            ),
+            self.maximum,
+        )
+
+        return round(
+            value,
+            2,
+        )
+
+    def _set_value(self, value):
+        value = self._normalize(value)
+
+        if value == self.value:
+            self.announce_self()
+            return
+
+        self.value = value
+
+        if self.on_changed:
+            self.on_changed(self.value)
+
+        self.announce_self()
+
+    def set_value(self, value):
+        self.value = self._normalize(value)
+        self.announce_self()
+
+    def announce(self):
+        value = f"{self.value:.2f}".rstrip("0").rstrip(".")
+
+        return f"{self.label}. {value}"
+
+    def previous(self):
+        self._set_value(
+            self.value - self.step,
+        )
+
+    def next(self):
+        self._set_value(
+            self.value + self.step,
+        )
+
+    def activate(self):
+        self.announce_self()
 
 
 class TextField(Control):
@@ -237,12 +329,22 @@ class TextField(Control):
         self.value = value
         self.placeholder = placeholder
         self.max_length = max_length
-
         self.on_changed = on_changed
 
         self.cursor = len(value)
         self.editing = False
         self.original_value = value
+
+    @property
+    def control_type(self):
+        return "text field"
+
+    @property
+    def instruction(self):
+        if self.editing:
+            return None
+
+        return "Press enter or space to edit"
 
     @property
     def capturing_input(self):
@@ -282,9 +384,14 @@ class TextField(Control):
             self.cursor = len(self.value)
             self.editing = True
 
-            self.speak(f"Editing {self.label}.")
+            self.speak(
+                f"Editing {self.label}.",
+            )
 
-            self.speak(self.value if self.value else self.placeholder)
+            if self.value:
+                self.speak(self.value)
+            else:
+                self.speak("Blank.")
 
             return
 
@@ -295,9 +402,22 @@ class TextField(Control):
 
         self.announce_self()
 
+    def cancel(self):
+        if not self.editing:
+            return
+
+        self.value = self.original_value
+        self.cursor = len(self.value)
+        self.editing = False
+
+        self.speak("Editing cancelled.")
+        self.announce_self()
+
     def insert(self, character):
         if len(self.value) >= self.max_length:
-            self.speak("Maximum length reached.")
+            self.speak(
+                "Maximum length reached.",
+            )
             return
 
         self.value = self.value[: self.cursor] + character + self.value[self.cursor :]
@@ -311,7 +431,9 @@ class TextField(Control):
 
     def backspace(self):
         if self.cursor == 0:
-            self.speak("Beginning of text.")
+            self.speak(
+                "Beginning of text.",
+            )
             return
 
         deleted = self.value[self.cursor - 1]
@@ -321,13 +443,19 @@ class TextField(Control):
         self.cursor -= 1
 
         if deleted == " ":
-            self.speak("Deleted space.")
+            self.speak(
+                "Space deleted.",
+            )
         else:
-            self.speak(f"Deleted {deleted}.")
+            self.speak(
+                f"Character {deleted} deleted.",
+            )
 
     def delete(self):
         if self.cursor >= len(self.value):
-            self.speak("End of text.")
+            self.speak(
+                "End of text.",
+            )
             return
 
         deleted = self.value[self.cursor]
@@ -335,87 +463,76 @@ class TextField(Control):
         self.value = self.value[: self.cursor] + self.value[self.cursor + 1 :]
 
         if deleted == " ":
-            self.speak("Deleted space.")
+            self.speak(
+                "Space deleted.",
+            )
         else:
-            self.speak(f"Deleted {deleted}.")
+            self.speak(
+                f"Character {deleted} deleted.",
+            )
 
-    def left(self):
+    def previous(self):
         if self.cursor > 0:
             self.cursor -= 1
 
         self.announce_cursor()
 
-    def right(self):
+    def next(self):
         if self.cursor < len(self.value):
             self.cursor += 1
 
         self.announce_cursor()
 
-    def handle_input(self, event):
-        if event.type != KEYDOWN:
-            return
+    def home(self):
+        self.cursor = 0
+        self.announce_cursor()
 
-        # Text editing gets first priority.
-        if event.key == pygame.K_BACKSPACE:
-            self.backspace()
-            return
-
-        if event.key == pygame.K_DELETE:
-            self.delete()
-            return
-
-        if event.key in LEFT:
-            self.left()
-            return
-
-        if event.key in RIGHT:
-            self.right()
-            return
-
-        # Space must be inserted while editing.
-        if event.key == pygame.K_SPACE:
-            self.insert(" ")
-            return
-
-        # Enter confirms the edit.
-        if event.key in (
-            pygame.K_RETURN,
-            pygame.K_KP_ENTER,
-        ):
-            self.activate()
-            return
-
-        # Escape cancels the edit.
-        if event.key == pygame.K_ESCAPE:
-            self.value = self.original_value
-            self.cursor = len(self.value)
-            self.editing = False
-
-            self.speak("Changes discarded.")
-
-            self.announce_self()
-            return
-
-        if event.unicode and event.unicode.isprintable():
-            self.insert(event.unicode)
+    def end(self):
+        self.cursor = len(self.value)
+        self.announce_cursor()
 
 
-class LabelField(Control):
-    def __init__(
-        self,
-        label,
-        value="",
-        announce=None,
-    ):
-        super().__init__(label, announce)
+class TextArea(Control):
+    def __init__(self, text, announce=None):
+        super().__init__(text, announce)
+        self.text = text
 
-        self.value = value
+        if isinstance(text, str):
+            self.text = [text]
+        else:
+            self.text = list(text)
+
+        self.index = 0
 
     def announce(self):
-        return f"{self.label}. {self.value}"
+        if not self.text:
+            return ""
 
-    def set_value(self, value):
-        self.value = value
+        return self.text[self.index]
+
+    def previous(self):
+        if not self.text:
+            return False
+
+        if self.index <= 0:
+            self.speak("Beginning of content.")
+            return False
+
+        self.index -= 1
+        self.announce_self()
+        return True
+
+    def next(self):
+        if not self.text:
+            return False
+
+        if self.index >= len(self.text) - 1:
+            self.speak("End of content.")
+            return False
+
+        self.index += 1
+        self.announce_self()
+        return True
 
     def activate(self):
         self.announce_self()
